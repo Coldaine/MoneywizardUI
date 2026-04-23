@@ -1,0 +1,28 @@
+import React from 'react';
+
+interface DashboardCardProps {
+  title: string;
+  children: React.ReactNode;
+  headerAction?: React.ReactNode;
+  footer?: React.ReactNode;
+  className?: string;
+}
+
+export const DashboardCard = ({ title, children, headerAction, footer, className }: DashboardCardProps) => {
+  return (
+    <div className={`card-monarch flex flex-col h-full ${className}`}>
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="font-bold text-sm text-secondary uppercase tracking-wider">{title}</h3>
+        {headerAction}
+      </div>
+      <div className="flex-grow">
+        {children}
+      </div>
+      {footer && (
+        <div className="mt-4 pt-4 border-t border-gray-100">
+          {footer}
+        </div>
+      )}
+    </div>
+  );
+};
