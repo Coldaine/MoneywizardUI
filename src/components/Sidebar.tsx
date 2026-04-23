@@ -71,15 +71,15 @@ export const Sidebar = ({ onAssistantOpen }: { onAssistantOpen: () => void }) =>
             <span>AI Assistant</span>
           </button>
 
-          <Link href="/help" className="flex items-center gap-3 p-2 text-secondary hover:bg-gray-100 rounded-lg">
+          <button type="button" className="w-full flex items-center gap-3 p-2 text-secondary hover:bg-gray-100 rounded-lg text-left">
             <span>?</span>
             <span>Help &amp; Support</span>
-          </Link>
+          </button>
 
-          <Link href="/referral" className="flex items-center gap-3 p-2 text-secondary hover:bg-gray-100 rounded-lg">
+          <button type="button" className="w-full flex items-center gap-3 p-2 text-secondary hover:bg-gray-100 rounded-lg text-left">
             <span>♥</span>
             <span>Invite a friend, get $30</span>
-          </Link>
+          </button>
         </div>
 
         <button aria-haspopup="menu" className="w-full flex items-center justify-between p-2 hover:bg-gray-100 rounded-lg border-t border-gray-200 pt-4">

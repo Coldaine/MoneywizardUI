@@ -119,7 +119,7 @@ export default function CashFlowPage() {
             <thead>
               <tr className="border-b border-gray-100">
                 <th className="text-left py-2 font-bold text-secondary uppercase tracking-wider text-[10px]">Income</th>
-                <th className="text-right py-2 font-bold text-secondary uppercase tracking-wider text-[10px]">Category</th>
+                <th className="text-right py-2 font-bold text-secondary uppercase tracking-wider text-[10px]">Amount</th>
               </tr>
             </thead>
             <tbody>

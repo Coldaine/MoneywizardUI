@@ -18,12 +18,13 @@ const midBars = [
   { label: "Business", pct: 2.00, amount: "$11,469.20", color: "#A855F7" },
 ];
 
-// Right column bars
+// Right column bars — must total 100% so computeSegments fills the full column height
 const rightBars = [
   { label: "Savings", pct: 69.22, amount: "$396,014.77", color: "#0797B9" },
   { label: "Housing", pct: 12.57, amount: "$71,918.72", color: "#F59E0B" },
   { label: "Financial", pct: 6.44, amount: "$36,818.26", color: "#EF4444" },
   { label: "Health", pct: 2.77, amount: "$15,835.84", color: "#EC4899" },
+  { label: "Other", pct: 9.00, amount: "$51,490.55", color: "#94A3B8" },
 ];
 
 // Compute y/height for bar segments within [topY, bottomY]

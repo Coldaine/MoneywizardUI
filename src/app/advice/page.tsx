@@ -1,3 +1,6 @@
+'use client';
+
+import { useState } from 'react';
 import { DashboardCard } from "@/components/DashboardCard";
 
 interface InsightCard {
@@ -52,6 +55,11 @@ const confidenceColor: Record<string, string> = {
 const FILTER_TABS = ['All', 'Spending', 'Savings', 'Investments', 'Budget'];
 
 export default function AdvicePage() {
+  const [selectedTab, setSelectedTab] = useState('All');
+  const filteredInsights = selectedTab === 'All'
+    ? insights
+    : insights.filter((i) => i.category === selectedTab);
+
   return (
     <div className="space-y-6">
       {/* Page header */}
@@ -66,9 +74,10 @@ export default function AdvicePage() {
           <button
             key={tab}
             role="tab"
-            aria-selected={tab === 'All'}
+            aria-selected={selectedTab === tab}
+            onClick={() => setSelectedTab(tab)}
             className={`px-4 py-2 text-sm font-semibold transition-colors ${
-              tab === 'All'
+              selectedTab === tab
                 ? 'text-accent border-b-2 border-accent'
                 : 'text-secondary hover:text-foreground'
             }`}
@@ -80,7 +89,7 @@ export default function AdvicePage() {
 
       {/* 2x2 grid of insight cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {insights.map((insight) => (
+        {filteredInsights.map((insight) => (
           <DashboardCard key={insight.headline} title="">
             <div className="flex flex-col h-full">
               {/* Badges */}

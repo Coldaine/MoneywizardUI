@@ -206,7 +206,7 @@ export default function ForecastingPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {/* Card 1: Retirement age slider */}
         <div className="card-monarch space-y-3">
-          <div className="text-sm font-semibold text-secondary uppercase tracking-wider">
+          <div id="retirement-age-label" className="text-sm font-semibold text-secondary uppercase tracking-wider">
             Choose a retirement age
           </div>
           <div className="text-4xl font-bold text-primary">{retirementAge}</div>
@@ -216,6 +216,7 @@ export default function ForecastingPage() {
             max={80}
             value={retirementAge}
             onChange={(e) => setRetirementAge(Number(e.target.value))}
+            aria-labelledby="retirement-age-label"
             className="w-full accent-primary"
           />
           <div className="flex justify-between text-xs text-secondary">

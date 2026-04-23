@@ -213,8 +213,8 @@ export default function GoalsPage() {
             </div>
           ) : (
             <div className="space-y-4">
-              {mockGoals.map((goal, i) => (
-                <div key={i} className="card-monarch flex items-center gap-5">
+              {mockGoals.map((goal) => (
+                <div key={goal.name} className="card-monarch flex items-center gap-5">
                   <div className="relative w-16 h-16 flex-shrink-0 flex items-center justify-center">
                     <ProgressRing radius={32} pct={goal.pct} color={goal.color} />
                     <span className="absolute text-xs font-bold">{goal.pct}%</span>

@@ -101,7 +101,9 @@ function Section({ title, rows, defaultOpen = true }: SectionProps) {
       {open && (
         <div className="pl-2">
           {rows.map((row) => <BudgetRowItem key={row.name} row={row} />)}
-          <button className="text-accent text-xs font-semibold mt-1 hover:underline">Show 1 uncategorized</button>
+          {rows.length > 0 && (
+            <button className="text-accent text-xs font-semibold mt-1 hover:underline">Show 1 uncategorized</button>
+          )}
         </div>
       )}
     </div>
@@ -159,7 +161,7 @@ export default function BudgetPage() {
             onClick={() => setShowModal(true)}
             className="bg-accent text-white px-3 py-1.5 rounded-md text-sm font-bold hover:bg-accent/90 transition-colors"
           >
-            Reset
+            New budget
           </button>
         </div>
       </div>

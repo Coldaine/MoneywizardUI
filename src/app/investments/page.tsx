@@ -18,9 +18,13 @@ function DonutChart() {
   const strokeWidth = 18;
   const circumference = 2 * Math.PI * r;
 
+  // Normalize percentages so they always sum to exactly 100
+  const totalPct = allocationData.reduce((s, d) => s + d.percent, 0);
+
   let offset = 0;
   const segments = allocationData.map((d) => {
-    const dash = (d.percent / 100) * circumference;
+    const normalizedPct = (d.percent / totalPct) * 100;
+    const dash = (normalizedPct / 100) * circumference;
     const gap = circumference - dash;
     const seg = { ...d, dash, gap, offset };
     offset += dash;
@@ -233,9 +237,9 @@ export default function InvestmentsPage() {
                 </button>
 
                 {/* Group items */}
-                {expandedGroups[group.group] && group.items.map((item, i) => (
+                {expandedGroups[group.group] && group.items.map((item) => (
                   <div
-                    key={i}
+                    key={`${group.group}-${item.ticker}`}
                     className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr_1fr] gap-2 px-4 py-3 hover:bg-gray-50 border-b border-gray-100"
                   >
                     <div className="pl-5">

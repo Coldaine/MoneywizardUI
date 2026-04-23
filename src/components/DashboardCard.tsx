@@ -8,7 +8,7 @@ interface DashboardCardProps {
   className?: string;
 }
 
-export const DashboardCard = ({ title, children, headerAction, footer, className }: DashboardCardProps) => {
+export const DashboardCard = ({ title, children, headerAction, footer, className = '' }: DashboardCardProps) => {
   return (
     <div className={`card-monarch flex flex-col h-full ${className}`}>
       {(title || headerAction) && (
