@@ -1,7 +1,7 @@
 import React from 'react';
 
 interface DashboardCardProps {
-  title: string;
+  title?: string;
   children: React.ReactNode;
   headerAction?: React.ReactNode;
   footer?: React.ReactNode;
@@ -11,10 +11,12 @@ interface DashboardCardProps {
 export const DashboardCard = ({ title, children, headerAction, footer, className }: DashboardCardProps) => {
   return (
     <div className={`card-monarch flex flex-col h-full ${className}`}>
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="font-bold text-sm text-secondary uppercase tracking-wider">{title}</h3>
-        {headerAction}
-      </div>
+      {(title || headerAction) && (
+        <div className="flex justify-between items-center mb-4">
+          {title && <h3 className="font-bold text-sm text-secondary uppercase tracking-wider">{title}</h3>}
+          {headerAction}
+        </div>
+      )}
       <div className="flex-grow">
         {children}
       </div>

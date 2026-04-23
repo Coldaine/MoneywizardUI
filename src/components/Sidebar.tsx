@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 const navItems = [
   { label: 'Dashboard', icon: '📊', href: '/' },
@@ -18,6 +18,8 @@ const navItems = [
 ];
 
 export const Sidebar = ({ onAssistantOpen }: { onAssistantOpen: () => void }) => {
+  const pathname = usePathname();
+
   return (
     <aside className="sidebar-monarch p-4 flex flex-col justify-between">
       <div>
@@ -25,22 +27,29 @@ export const Sidebar = ({ onAssistantOpen }: { onAssistantOpen: () => void }) =>
           <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white font-bold">M</div>
           <span className="font-bold text-lg">Monarch</span>
         </div>
-        
+
         <nav className="space-y-1">
-          {navItems.map((item) => (
-            <Link 
-              key={item.label} 
-              href={item.href}
-              className={`flex items-center justify-between p-2 rounded-lg hover:bg-gray-100 transition-colors ${item.label === 'Dashboard' ? 'bg-white shadow-sm font-semibold' : 'text-secondary'}`}
-            >
-              <div className="flex items-center gap-3">
-                <span>{item.icon}</span>
-                <span>{item.label}</span>
-                {item.beta && <span className="text-[10px] bg-gray-200 px-1 rounded font-bold">BETA</span>}
-              </div>
-              {item.badge && <span className="bg-primary text-white text-xs px-1.5 rounded-full">{item.badge}</span>}
-            </Link>
-          ))}
+          {navItems.map((item) => {
+            const isActive = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href);
+            return (
+              <Link
+                key={item.label}
+                href={item.href}
+                className={`flex items-center justify-between p-2 rounded-lg transition-colors ${
+                  isActive
+                    ? 'bg-white shadow-sm font-semibold text-foreground'
+                    : 'text-secondary hover:bg-gray-100'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <span>{item.icon}</span>
+                  <span>{item.label}</span>
+                  {item.beta && <span className="text-[10px] bg-gray-200 px-1 rounded font-bold">BETA</span>}
+                </div>
+                {item.badge && <span className="bg-primary text-white text-xs px-1.5 rounded-full">{item.badge}</span>}
+              </Link>
+            );
+          })}
         </nav>
       </div>
 
@@ -53,14 +62,34 @@ export const Sidebar = ({ onAssistantOpen }: { onAssistantOpen: () => void }) =>
             </div>
             <span className="text-[10px] block mt-1">1 day left</span>
           </div>
-          
-          <button 
+
+          <button
             onClick={onAssistantOpen}
             className="w-full flex items-center gap-3 p-2 text-primary font-semibold hover:bg-primary/5 rounded-lg text-left"
           >
             <span>✨</span>
             <span>AI Assistant</span>
           </button>
+
+          <Link href="/help" className="flex items-center gap-3 p-2 text-secondary hover:bg-gray-100 rounded-lg">
+            <span>?</span>
+            <span>Help &amp; Support</span>
+          </Link>
+
+          <Link href="/referral" className="flex items-center gap-3 p-2 text-secondary hover:bg-gray-100 rounded-lg">
+            <span>♥</span>
+            <span>Invite a friend, get $30</span>
+          </Link>
+        </div>
+
+        <div className="flex items-center justify-between p-2 hover:bg-gray-100 rounded-lg cursor-pointer border-t border-gray-200 pt-4">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white font-bold text-sm">
+              P
+            </div>
+            <span className="font-semibold text-foreground">Patrick</span>
+          </div>
+          <span className="text-secondary text-xs">▾</span>
         </div>
       </div>
     </aside>
