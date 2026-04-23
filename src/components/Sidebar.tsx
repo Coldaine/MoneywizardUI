@@ -42,7 +42,7 @@ export const Sidebar = ({ onAssistantOpen }: { onAssistantOpen: () => void }) =>
                 }`}
               >
                 <div className="flex items-center gap-3">
-                  <span>{item.icon}</span>
+                  <span aria-hidden="true">{item.icon}</span>
                   <span>{item.label}</span>
                   {item.beta && <span className="text-[10px] bg-gray-200 px-1 rounded font-bold">BETA</span>}
                 </div>
@@ -82,15 +82,15 @@ export const Sidebar = ({ onAssistantOpen }: { onAssistantOpen: () => void }) =>
           </Link>
         </div>
 
-        <div className="flex items-center justify-between p-2 hover:bg-gray-100 rounded-lg cursor-pointer border-t border-gray-200 pt-4">
+        <button aria-haspopup="menu" className="w-full flex items-center justify-between p-2 hover:bg-gray-100 rounded-lg border-t border-gray-200 pt-4">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white font-bold text-sm">
+            <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white font-bold text-sm" aria-hidden="true">
               P
             </div>
             <span className="font-semibold text-foreground">Patrick</span>
           </div>
-          <span className="text-secondary text-xs">▾</span>
-        </div>
+          <span className="text-secondary text-xs" aria-hidden="true">▾</span>
+        </button>
       </div>
     </aside>
   );

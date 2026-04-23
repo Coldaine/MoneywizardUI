@@ -88,7 +88,7 @@ export default function ReportsPage() {
       </div>
 
       {/* Summary bar */}
-      <div className="grid grid-cols-4 gap-4 pb-4 border-b border-gray-100">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pb-4 border-b border-gray-100">
         <div>
           <p className="text-xs text-secondary uppercase tracking-wider mb-1">Total Income</p>
           <p className="text-xl font-bold">$572,078.14</p>

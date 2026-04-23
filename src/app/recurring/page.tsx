@@ -69,15 +69,15 @@ export default function RecurringPage() {
       {/* Header row */}
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Recurring</h1>
-        <div className="flex rounded-lg border border-gray-200 overflow-hidden bg-white text-sm font-semibold">
-          <button className="px-4 py-2 bg-primary text-white">Monthly</button>
-          <button className="px-4 py-2 text-secondary hover:bg-gray-50 transition-colors">Weekly</button>
-          <button className="px-4 py-2 text-secondary hover:bg-gray-50 transition-colors">Annual</button>
+        <div role="tablist" aria-label="Frequency" className="flex rounded-lg border border-gray-200 overflow-hidden bg-white text-sm font-semibold">
+          <button role="tab" aria-selected={true} className="px-4 py-2 bg-primary text-white">Monthly</button>
+          <button role="tab" aria-selected={false} aria-disabled="true" className="px-4 py-2 text-secondary hover:bg-gray-50 transition-colors">Weekly</button>
+          <button role="tab" aria-selected={false} aria-disabled="true" className="px-4 py-2 text-secondary hover:bg-gray-50 transition-colors">Annual</button>
         </div>
       </div>
 
       {/* Summary cards */}
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <DashboardCard title="Monthly Total">
           <div className="text-2xl font-bold text-chart-teal">${monthlyTotal.toFixed(2)}</div>
           <div className="text-secondary text-sm mt-1">per month</div>

@@ -61,10 +61,12 @@ export default function AdvicePage() {
       </div>
 
       {/* Filter tabs */}
-      <div className="flex gap-1 border-b border-gray-200">
+      <div role="tablist" aria-label="Filter insights" className="flex gap-1 border-b border-gray-200">
         {FILTER_TABS.map((tab) => (
           <button
             key={tab}
+            role="tab"
+            aria-selected={tab === 'All'}
             className={`px-4 py-2 text-sm font-semibold transition-colors ${
               tab === 'All'
                 ? 'text-accent border-b-2 border-accent'
@@ -77,7 +79,7 @@ export default function AdvicePage() {
       </div>
 
       {/* 2x2 grid of insight cards */}
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {insights.map((insight) => (
           <DashboardCard key={insight.headline} title="">
             <div className="flex flex-col h-full">

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { DashboardCard } from "@/components/DashboardCard";
 
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -112,25 +112,37 @@ export default function BudgetPage() {
   const [monthIndex, setMonthIndex] = useState(3); // April = index 3
   const [showModal, setShowModal] = useState(false);
 
+  useEffect(() => {
+    if (!showModal) return;
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') setShowModal(false); };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, [showModal]);
+
   const totalIncomeActual = incomeRows.reduce((s, r) => s + r.actual, 0);
   const totalIncomeBudget = incomeRows.reduce((s, r) => s + r.budget, 0);
   const totalIncomeRem = totalIncomeBudget - totalIncomeActual;
 
   return (
     <div className="space-y-6">
+      <h1 className="sr-only">Budget</h1>
       {/* Month Navigator + Progress */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <button
+            aria-label="Previous month"
+            disabled={monthIndex === 0}
             onClick={() => setMonthIndex((i) => Math.max(0, i - 1))}
-            className="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center hover:bg-gray-50 font-bold"
+            className="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center hover:bg-gray-50 font-bold disabled:opacity-40 disabled:cursor-not-allowed"
           >
             ‹
           </button>
           <span className="font-bold text-lg">{MONTHS[monthIndex]} 2026</span>
           <button
+            aria-label="Next month"
+            disabled={monthIndex === 11}
             onClick={() => setMonthIndex((i) => Math.min(11, i + 1))}
-            className="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center hover:bg-gray-50 font-bold"
+            className="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center hover:bg-gray-50 font-bold disabled:opacity-40 disabled:cursor-not-allowed"
           >
             ›
           </button>
@@ -194,10 +206,12 @@ export default function BudgetPage() {
               <div className="text-secondary text-sm">Left to budget</div>
             </div>
             {/* Tabs */}
-            <div className="flex border-b border-gray-200 mb-4">
+            <div role="tablist" aria-label="Budget view" className="flex border-b border-gray-200 mb-4">
               {['Income', 'Expenses', 'Remaining'].map((tab) => (
                 <button
                   key={tab}
+                  role="tab"
+                  aria-selected={tab === 'Expenses'}
                   className={`flex-1 text-xs font-semibold py-2 transition-colors ${
                     tab === 'Expenses'
                       ? 'text-accent border-b-2 border-accent'
@@ -238,8 +252,8 @@ export default function BudgetPage() {
       {/* Create Budget Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50" onClick={() => setShowModal(false)}>
-          <div className="bg-white rounded-xl p-8 max-w-md w-full shadow-xl" onClick={(e) => e.stopPropagation()}>
-            <h2 className="text-xl font-bold mb-2">Create a budget</h2>
+          <div role="dialog" aria-modal="true" aria-labelledby="budget-modal-title" className="bg-white rounded-xl p-8 max-w-md w-full shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <h2 id="budget-modal-title" className="text-xl font-bold mb-2">Create a budget</h2>
             <p className="text-secondary text-sm mb-6">
               Set up your monthly budget to track spending and reach your financial goals. We&apos;ll use your transaction history to suggest budget amounts.
             </p>

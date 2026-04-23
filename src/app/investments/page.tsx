@@ -110,10 +110,12 @@ export default function InvestmentsPage() {
       </div>
 
       {/* Main tabs: Holdings | Advanced */}
-      <div className="border-b border-gray-200 flex gap-6">
+      <div role="tablist" aria-label="Investment view" className="border-b border-gray-200 flex gap-6">
         {(['Holdings', 'Advanced'] as const).map((tab) => (
           <button
             key={tab}
+            role="tab"
+            aria-selected={mainTab === tab}
             onClick={() => setMainTab(tab)}
             className={`pb-2 text-sm font-semibold transition-colors ${
               mainTab === tab
@@ -130,10 +132,12 @@ export default function InvestmentsPage() {
         <div className="space-y-4">
           {/* Sub-tabs: Market | Allocation + dropdowns */}
           <div className="flex items-center justify-between">
-            <div className="flex gap-4">
+            <div role="tablist" aria-label="Holdings view" className="flex gap-4">
               {(['Market', 'Allocation'] as const).map((tab) => (
                 <button
                   key={tab}
+                  role="tab"
+                  aria-selected={subTab === tab}
                   onClick={() => setSubTab(tab)}
                   className={`pb-1 text-sm font-medium transition-colors ${
                     subTab === tab
@@ -232,7 +236,7 @@ export default function InvestmentsPage() {
                 {expandedGroups[group.group] && group.items.map((item, i) => (
                   <div
                     key={i}
-                    className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr_1fr] gap-2 px-4 py-3 hover:bg-gray-50 border-b border-gray-100 cursor-pointer"
+                    className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr_1fr] gap-2 px-4 py-3 hover:bg-gray-50 border-b border-gray-100"
                   >
                     <div className="pl-5">
                       <div className="text-sm font-semibold">{item.ticker}</div>

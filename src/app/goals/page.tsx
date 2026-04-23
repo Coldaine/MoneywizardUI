@@ -75,8 +75,9 @@ export default function GoalsPage() {
 
   return (
     <div className="space-y-6">
+      <h1 className="text-2xl font-bold">Goals</h1>
       {/* Tab bar */}
-      <div className="flex gap-6 border-b border-gray-200 text-sm font-semibold">
+      <div role="tablist" className="flex gap-6 border-b border-gray-200 text-sm font-semibold">
         <button
           className={`pb-2 border-b-2 transition-colors ${activeTab === "save-up" ? "border-primary text-primary" : "border-transparent text-secondary hover:text-foreground"}`}
           onClick={() => setActiveTab("save-up")}

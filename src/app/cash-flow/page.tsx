@@ -38,10 +38,10 @@ export default function CashFlowPage() {
         <h1 className="text-2xl font-bold">Cash Flow</h1>
         <div className="flex items-center gap-3">
           {/* Period toggle */}
-          <div className="flex bg-gray-100 rounded-lg p-1 text-sm font-semibold">
-            <button className="bg-white shadow px-4 py-1.5 rounded-md">Monthly</button>
-            <button className="px-4 py-1.5 rounded-md text-secondary hover:text-foreground">Quarterly</button>
-            <button className="px-4 py-1.5 rounded-md text-secondary hover:text-foreground">Yearly</button>
+          <div role="tablist" aria-label="View period" className="flex bg-gray-100 rounded-lg p-1 text-sm font-semibold">
+            <button role="tab" aria-selected={true} className="bg-white shadow px-4 py-1.5 rounded-md">Monthly</button>
+            <button role="tab" aria-selected={false} aria-disabled="true" className="px-4 py-1.5 rounded-md text-secondary hover:text-foreground">Quarterly</button>
+            <button role="tab" aria-selected={false} aria-disabled="true" className="px-4 py-1.5 rounded-md text-secondary hover:text-foreground">Yearly</button>
           </div>
         </div>
       </div>
@@ -53,11 +53,11 @@ export default function CashFlowPage() {
           <div className="flex items-center gap-4">
             {/* Year navigator */}
             <div className="flex items-center gap-2 text-sm font-semibold">
-              <button className="w-7 h-7 flex items-center justify-center rounded-full hover:bg-gray-100 text-secondary">&#8249;</button>
+              <button aria-label="Previous year" className="w-7 h-7 flex items-center justify-center rounded-full hover:bg-gray-100 text-secondary">&#8249;</button>
               <span className="text-secondary">2024</span>
               <span className="font-bold">2025</span>
               <span className="text-secondary">2026</span>
-              <button className="w-7 h-7 flex items-center justify-center rounded-full hover:bg-gray-100 text-secondary">&#8250;</button>
+              <button aria-label="Next year" className="w-7 h-7 flex items-center justify-center rounded-full hover:bg-gray-100 text-secondary">&#8250;</button>
             </div>
             {/* Legend */}
             <div className="flex items-center gap-4 text-xs text-secondary">
@@ -98,7 +98,7 @@ export default function CashFlowPage() {
         </div>
 
         {/* 3 summary cards */}
-        <div className="grid grid-cols-3 gap-4 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
           <div className="card-monarch text-center py-5">
             <p className="text-xs text-secondary uppercase tracking-wider mb-1">Income</p>
             <p className="text-2xl font-bold">$17,804</p>

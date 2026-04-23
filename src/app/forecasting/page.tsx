@@ -203,7 +203,7 @@ export default function ForecastingPage() {
       </div>
 
       {/* Scenario cards grid */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {/* Card 1: Retirement age slider */}
         <div className="card-monarch space-y-3">
           <div className="text-sm font-semibold text-secondary uppercase tracking-wider">
