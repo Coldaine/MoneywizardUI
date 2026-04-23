@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Sidebar } from "@/components/Sidebar";
 import { TopBar } from "@/components/TopBar";
 import { AssistantDrawer } from "@/components/AssistantDrawer";
@@ -15,7 +15,7 @@ const inter = Inter({
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: import('react').ReactNode;
 }>) {
   const [isAssistantOpen, setIsAssistantOpen] = useState(false);
 
