@@ -1,10 +1,10 @@
-import React from 'react';
+import type { ReactNode } from 'react';
 
 interface DashboardCardProps {
   title?: string;
-  children: React.ReactNode;
-  headerAction?: React.ReactNode;
-  footer?: React.ReactNode;
+  children: ReactNode;
+  headerAction?: ReactNode;
+  footer?: ReactNode;
   className?: string;
 }
 

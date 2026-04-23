@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { DashboardCard } from "@/components/DashboardCard";
 
 // Life event pins for the chart
