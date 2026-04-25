@@ -21,13 +21,16 @@ function DonutChart() {
   // Normalize percentages so they always sum to exactly 100
   const totalPct = allocationData.reduce((s, d) => s + d.percent, 0);
 
-  const segments = allocationData.reduce((acc, d) => {
+  const segments = allocationData.map((d, index) => {
     const normalizedPct = (d.percent / totalPct) * 100;
     const dash = (normalizedPct / 100) * circumference;
     const gap = circumference - dash;
-    const offset = acc.length === 0 ? 0 : acc[acc.length - 1].offset + acc[acc.length - 1].dash;
-    return [...acc, { ...d, dash, gap, offset }];
-  }, [] as Array<(typeof allocationData)[number] & { dash: number; gap: number; offset: number }>);
+    const offset = allocationData.slice(0, index).reduce((sum, prev) => {
+      const prevPct = (prev.percent / totalPct) * 100;
+      return sum + ((prevPct / 100) * circumference);
+    }, 0);
+    return { ...d, dash, gap, offset };
+  });
 
   // Rotate so first segment starts at top (-90deg = -circumference/4 offset in stroke-dashoffset terms)
   const startOffset = circumference * 0.25;
