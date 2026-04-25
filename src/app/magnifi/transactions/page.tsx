@@ -1,0 +1,156 @@
+'use client';
+
+import { useState } from 'react';
+
+const allTransactions = [
+  { date: 'Apr 24', account: 'Fidelity',  type: 'Buy',      security: 'NVDA', qty: '2.0',  price: '$891.33', total: '$1,782.66' },
+  { date: 'Apr 22', account: 'Robinhood', type: 'Dividend', security: 'AAPL', qty: '—',    price: '—',       total: '$42.30'    },
+  { date: 'Apr 20', account: 'Fidelity',  type: 'Buy',      security: 'VTI',  qty: '5.0',  price: '$241.87', total: '$1,209.35' },
+  { date: 'Apr 18', account: 'Coinbase',  type: 'Sell',     security: 'GBTC', qty: '5.0',  price: '$51.36',  total: '$256.80'   },
+  { date: 'Apr 15', account: 'Robinhood', type: 'Buy',      security: 'MSFT', qty: '3.0',  price: '$415.22', total: '$1,245.66' },
+  { date: 'Apr 12', account: 'Fidelity',  type: 'Dividend', security: 'VTI',  qty: '—',    price: '—',       total: '$128.50'   },
+  { date: 'Apr 10', account: 'Fidelity',  type: 'Buy',      security: 'AAPL', qty: '10.0', price: '$184.20', total: '$1,842.00' },
+  { date: 'Apr 5',  account: 'Robinhood', type: 'Sell',     security: 'TSLA', qty: '8.0',  price: '$175.50', total: '$1,404.00' },
+  { date: 'Apr 2',  account: 'Fidelity',  type: 'Buy',      security: 'BND',  qty: '15.0', price: '$73.42',  total: '$1,101.30' },
+  { date: 'Mar 28', account: 'Coinbase',  type: 'Buy',      security: 'GBTC', qty: '10.0', price: '$49.80',  total: '$498.00'   },
+];
+
+const BADGE: Record<string, { bg: string; color: string }> = {
+  Buy:      { bg: 'rgba(22,181,72,0.12)',   color: '#16B548' },
+  Sell:     { bg: 'rgba(245,68,29,0.12)',   color: '#F5441D' },
+  Dividend: { bg: 'rgba(224,205,114,0.2)',  color: '#B89A00' },
+  Transfer: { bg: 'rgba(96,96,96,0.12)',    color: '#606060' },
+};
+
+const ACCOUNTS = ['All Accounts', 'Fidelity', 'Robinhood', 'Coinbase'];
+const TYPES    = ['All', 'Buy', 'Sell', 'Dividend', 'Transfer'];
+const DATES    = ['Last 30 days', 'Last 60 days', 'Last 90 days', 'Year to date'];
+
+export default function TransactionsPage() {
+  const [account, setAccount] = useState('All Accounts');
+  const [type,    setType]    = useState('All');
+  const [date,    setDate]    = useState('Last 30 days');
+
+  const filtered = allTransactions.filter((t) => {
+    if (account !== 'All Accounts' && t.account !== account) return false;
+    if (type    !== 'All'          && t.type    !== type)    return false;
+    return true;
+  });
+
+  return (
+    <div className="space-y-6 max-w-5xl">
+      {/* Page heading */}
+      <div>
+        <h1 className="text-2xl font-bold text-[#030F12]">Transactions</h1>
+        <p className="text-sm mt-0.5" style={{ color: '#606060' }}>Trade history and account activity across all linked accounts.</p>
+      </div>
+
+      {/* Filter bar */}
+      <div className="card-magnifi flex flex-wrap gap-3 items-center">
+        <Select label="Account" value={account} options={ACCOUNTS} onChange={setAccount} />
+        <Select label="Type"    value={type}    options={TYPES}    onChange={setType}    />
+        <Select label="Date"    value={date}    options={DATES}    onChange={setDate}    />
+        <button
+          className="ml-auto rounded-full bg-[#E0CD72] text-[#030F12] font-semibold px-5 py-2 text-sm hover:bg-[#E7C751] transition-colors"
+        >
+          Apply Filters
+        </button>
+      </div>
+
+      {/* Summary stats */}
+      <div className="grid grid-cols-3 gap-4">
+        <StatCard label="Total Bought"        value="$12,450.00" color="#030F12" />
+        <StatCard label="Total Sold"          value="$3,200.00"  color="#F5441D" />
+        <StatCard label="Dividends Received"  value="$847.00"    color="#16B548" />
+      </div>
+
+      {/* Table */}
+      <div className="card-magnifi overflow-x-auto">
+        <h2 className="text-base font-semibold mb-4 text-[#030F12]">Transaction History</h2>
+        <table className="w-full text-sm">
+          <thead>
+            <tr style={{ borderBottom: '2px solid #F0F0F0' }}>
+              {['Date', 'Account', 'Type', 'Security', 'Qty', 'Price', 'Total'].map((col) => (
+                <th key={col} className="pb-2 text-left font-semibold pr-4" style={{ color: '#606060' }}>
+                  {col}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {filtered.map((t, i) => {
+              const badge = BADGE[t.type] ?? BADGE.Transfer;
+              return (
+                <tr
+                  key={i}
+                  className="hover:bg-gray-50 transition-colors"
+                  style={{ borderBottom: '1px solid #F8F8F8' }}
+                >
+                  <td className="py-3 pr-4 text-gray-600 whitespace-nowrap">{t.date}</td>
+                  <td className="py-3 pr-4 font-medium text-[#030F12]">{t.account}</td>
+                  <td className="py-3 pr-4">
+                    <span
+                      className="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold"
+                      style={{ background: badge.bg, color: badge.color }}
+                    >
+                      {t.type}
+                    </span>
+                  </td>
+                  <td className="py-3 pr-4 font-bold text-[#030F12]">{t.security}</td>
+                  <td className="py-3 pr-4 text-gray-600">{t.qty}</td>
+                  <td className="py-3 pr-4 text-gray-600">{t.price}</td>
+                  <td className="py-3 font-semibold text-[#030F12]">{t.total}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+
+        {/* Pagination */}
+        <div className="mt-5 pt-4 flex items-center justify-between" style={{ borderTop: '1px solid #F0F0F0' }}>
+          <p className="text-sm" style={{ color: '#606060' }}>
+            Showing {filtered.length} of 47 transactions
+          </p>
+          <button className="rounded-full border font-semibold text-sm px-5 py-2 hover:bg-[#E0CD72] hover:text-[#030F12] transition-colors" style={{ borderColor: '#E0CD72', color: '#B89A00' }}>
+            Load more
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Select({
+  label,
+  value,
+  options,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  options: string[];
+  onChange: (v: string) => void;
+}) {
+  return (
+    <div className="flex flex-col gap-0.5">
+      <span className="text-xs font-medium" style={{ color: '#606060' }}>{label}</span>
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="border rounded-lg px-3 py-1.5 text-sm text-[#030F12] bg-white focus:outline-none focus:ring-2 cursor-pointer"
+        style={{ borderColor: '#E0E0E0', focusRingColor: '#E0CD72' } as React.CSSProperties}
+      >
+        {options.map((o) => <option key={o}>{o}</option>)}
+      </select>
+    </div>
+  );
+}
+
+function StatCard({ label, value, color }: { label: string; value: string; color: string }) {
+  return (
+    <div className="card-magnifi">
+      <p className="text-xs font-medium mb-1" style={{ color: '#606060' }}>{label}</p>
+      <p className="text-2xl font-bold" style={{ color }}>{value}</p>
+    </div>
+  );
+}
