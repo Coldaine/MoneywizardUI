@@ -1,5 +1,3 @@
-import { DashboardCard } from "@/components/DashboardCard";
-
 const transactions = [
   { date: 'Apr 22', merchant: 'Starbucks', category: '☕ Food & Dining', account: 'SoFi Credit Card', amount: '-$5.45', status: 'Reviewed' },
   { date: 'Apr 21', merchant: 'Employer Inc', category: '💰 Income', account: 'SoFi Checking', amount: '+$2,500.00', status: 'New', isIncome: true },

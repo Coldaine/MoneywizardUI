@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { Sidebar } from "@/components/Sidebar";
 import { TopBar } from "@/components/TopBar";
 import { AssistantDrawer } from "@/components/AssistantDrawer";
@@ -18,21 +19,29 @@ export default function RootLayout({
   children: import('react').ReactNode;
 }>) {
   const [isAssistantOpen, setIsAssistantOpen] = useState(false);
+  const pathname = usePathname();
+  const isMagnifi = pathname === '/magnifi' || (pathname?.startsWith('/magnifi/') ?? false);
 
   return (
     <html lang="en">
       <body className={`${inter.variable} antialiased`}>
-        <Sidebar onAssistantOpen={() => setIsAssistantOpen(true)} />
-        <div className="flex flex-col min-h-screen">
-          <TopBar />
-          <main className="content-monarch">
-            {children}
-          </main>
-        </div>
-        <AssistantDrawer 
-          isOpen={isAssistantOpen} 
-          onClose={() => setIsAssistantOpen(false)} 
-        />
+        {isMagnifi ? (
+          children
+        ) : (
+          <>
+            <Sidebar onAssistantOpen={() => setIsAssistantOpen(true)} />
+            <div className="flex flex-col min-h-screen">
+              <TopBar />
+              <main className="content-monarch">
+                {children}
+              </main>
+            </div>
+            <AssistantDrawer
+              isOpen={isAssistantOpen}
+              onClose={() => setIsAssistantOpen(false)}
+            />
+          </>
+        )}
       </body>
     </html>
   );
