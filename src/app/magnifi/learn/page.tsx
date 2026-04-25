@@ -106,7 +106,7 @@ export default function LearnPage() {
         {[
           { label: 'Articles',   value: String(articles.length) },
           { label: 'Bookmarked', value: String(bookmarked.size) },
-          { label: 'Topics',     value: '4' },
+          { label: 'Topics',     value: String(CATEGORIES.length - 1) },
         ].map(({ label, value }) => (
           <div key={label} className="card-magnifi text-center py-4">
             <p className="text-2xl font-bold text-[#030F12]">{value}</p>
@@ -149,12 +149,9 @@ export default function LearnPage() {
                     {a.level}
                   </span>
                   <span className="text-xs" style={{ color: '#9CA3AF' }}>{a.readTime} read</span>
-                  <button
-                    className="ml-auto text-xs font-semibold"
-                    style={{ color: '#E0CD72' }}
-                  >
+                  <span className="ml-auto text-xs font-semibold" style={{ color: '#E0CD72' }}>
                     Read →
-                  </button>
+                  </span>
                 </div>
               </div>
             );

@@ -29,6 +29,8 @@ export default function InvestmentsPage() {
     return sum + parseFloat(h.value.replace(/[$,]/g, ''));
   }, 0);
   const totalValueStr = '$' + totalValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const totalWeight = holdings.reduce((sum, h) => sum + parseFloat(h.weight), 0);
+  const avgDayChange = holdings.reduce((sum, h) => sum + (parseFloat(h.weight) * parseFloat(h.dayChange)), 0) / totalWeight;
 
   return (
     <div className="space-y-6 max-w-5xl">
@@ -113,8 +115,10 @@ export default function InvestmentsPage() {
                 All Holdings
               </td>
               <td className="py-3 font-bold text-[#030F12]">{totalValueStr}</td>
-              <td className="py-3 font-bold text-[#030F12]">20.31%</td>
-              <td className="py-3 font-semibold" style={{ color: '#16B548' }}>+0.8% avg</td>
+              <td className="py-3 font-bold text-[#030F12]">{totalWeight.toFixed(2)}%</td>
+              <td className="py-3 font-semibold" style={{ color: avgDayChange >= 0 ? '#16B548' : '#F5441D' }}>
+                {avgDayChange >= 0 ? '+' : ''}{avgDayChange.toFixed(1)}% avg
+              </td>
             </tr>
           </tbody>
         </table>

@@ -97,6 +97,7 @@ export default function DocumentsPage() {
       <div className="relative">
         <input
           type="text"
+          aria-label="Search documents"
           placeholder="Search documents..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}

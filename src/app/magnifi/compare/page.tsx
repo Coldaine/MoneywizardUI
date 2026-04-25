@@ -90,7 +90,10 @@ export default function ComparePage() {
   const maxY = Math.max(...allY, 0) + 5;
 
   // Y-axis tick values
-  const yTicks = [0, 25, 50, 75, 87];
+  const yTicks = Array.from({ length: 5 }, (_, i) => {
+    const value = minY + (i / 4) * (maxY - minY);
+    return Math.round(value * 10) / 10;
+  });
 
   return (
     <div className="space-y-6 max-w-4xl">
@@ -185,7 +188,7 @@ export default function ComparePage() {
                     fontSize={10}
                     fill="#9CA3AF"
                   >
-                    {tick}%
+                    {`${tick.toFixed(1).replace(/\.0$/, '')}%`}
                   </text>
                 </g>
               );

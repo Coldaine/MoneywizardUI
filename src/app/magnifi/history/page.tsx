@@ -50,9 +50,24 @@ export default function HistoryPage() {
   const [accountFilter, setAccountFilter] = useState('All Accounts');
   const [dateFilter, setDateFilter] = useState('Last 30 days');
 
+  function matchesDateFilter(dateLabel: string, selected: string) {
+    const eventDate = new Date(dateLabel);
+    const today = new Date();
+    if (Number.isNaN(eventDate.getTime())) return true;
+
+    if (selected === 'Year to date') {
+      return eventDate >= new Date(today.getFullYear(), 0, 1);
+    }
+
+    const days = selected === 'Last 30 days' ? 30 : selected === 'Last 60 days' ? 60 : 90;
+    const msPerDay = 24 * 60 * 60 * 1000;
+    return today.getTime() - eventDate.getTime() <= days * msPerDay;
+  }
+
   const filtered = EVENTS.filter((e) => {
     if (typeFilter !== 'All' && e.type !== typeFilter) return false;
     if (accountFilter !== 'All Accounts' && e.account !== accountFilter) return false;
+    if (!matchesDateFilter(e.date, dateFilter)) return false;
     return true;
   });
 

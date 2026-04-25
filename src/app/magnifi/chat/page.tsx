@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import type { KeyboardEvent } from 'react';
 
 interface Message {
@@ -48,13 +48,16 @@ export default function ChatPage() {
   const [activeConvId, setActiveConvId] = useState(1);
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [inputValue, setInputValue] = useState('');
+  const nextMessageId = useRef(initialMessages.length + 1);
 
   function sendMessage() {
     const text = inputValue.trim();
     if (!text) return;
-    const userMsg: Message = { id: Date.now(), role: 'user', text };
+    const userMsgId = nextMessageId.current++;
+    const aiMsgId = nextMessageId.current++;
+    const userMsg: Message = { id: userMsgId, role: 'user', text };
     const aiMsg: Message = {
-      id: Date.now() + 1,
+      id: aiMsgId,
       role: 'ai',
       text: "I'm analyzing your portfolio data. This is a simulated response — in a live environment, I'd provide real-time insights based on your holdings and market conditions.",
     };
