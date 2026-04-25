@@ -16,13 +16,17 @@ const SLICES = [
 function DonutChart() {
   const cx = 90, cy = 90, r = 68, stroke = 28;
   const circ = 2 * Math.PI * r;
-  let offset = 0;
+  const total = SLICES.reduce((acc, s) => acc + s.pct, 0);
+  const cumOffsets = SLICES.reduce<number[]>((acc, s, i) => {
+    acc.push(i === 0 ? 0 : acc[i - 1] + (SLICES[i - 1].pct / total) * 100);
+    return acc;
+  }, []);
   return (
     <svg width={180} height={180} viewBox="0 0 180 180">
-      {SLICES.map((s) => {
+      {SLICES.map((s, i) => {
         const dash = (s.pct / 100) * circ;
         const gap  = circ - dash;
-        const el = (
+        return (
           <circle
             key={s.label}
             cx={cx} cy={cy} r={r}
@@ -30,12 +34,10 @@ function DonutChart() {
             stroke={s.color}
             strokeWidth={stroke}
             strokeDasharray={`${dash} ${gap}`}
-            strokeDashoffset={-(offset / 100) * circ + circ / 4}
+            strokeDashoffset={-(cumOffsets[i] / 100) * circ + circ / 4}
             style={{ transition: 'stroke-dashoffset 0.3s' }}
           />
         );
-        offset += s.pct;
-        return el;
       })}
       <text x={cx} y={cy - 6} textAnchor="middle" fontSize={13} fontWeight="700" fill="#030F12">
         $241k
@@ -87,12 +89,18 @@ export default function PortfolioPage() {
 
       {/* Tab bar */}
       <div
+        role="tablist"
         className="flex gap-1 rounded-full p-1 self-start"
         style={{ background: '#F0F0F0', width: 'fit-content' }}
       >
         {(['allocation', 'performance', 'risk'] as Tab[]).map((t) => (
           <button
             key={t}
+            role="tab"
+            aria-selected={tab === t}
+            id={t + '-tab'}
+            aria-controls={t + '-panel'}
+            tabIndex={tab === t ? 0 : -1}
             onClick={() => setTab(t)}
             className="px-5 py-1.5 rounded-full text-sm font-semibold capitalize transition-colors"
             style={
@@ -108,7 +116,7 @@ export default function PortfolioPage() {
 
       {/* ── Allocation tab ── */}
       {tab === 'allocation' && (
-        <div className="card-magnifi">
+        <div role="tabpanel" id="allocation-panel" aria-labelledby="allocation-tab" className="card-magnifi">
           <h2 className="text-base font-semibold mb-6 text-[#030F12]">Asset Allocation</h2>
           <div className="flex flex-col md:flex-row gap-8 items-start">
             <DonutChart />
@@ -146,7 +154,7 @@ export default function PortfolioPage() {
 
       {/* ── Performance tab ── */}
       {tab === 'performance' && (
-        <div className="space-y-6">
+        <div role="tabpanel" id="performance-panel" aria-labelledby="performance-tab" className="space-y-6">
           <div className="card-magnifi">
             <div className="flex items-center gap-6 mb-4">
               <span className="flex items-center gap-2 text-sm font-medium text-[#030F12]">
@@ -186,7 +194,7 @@ export default function PortfolioPage() {
 
       {/* ── Risk tab ── */}
       {tab === 'risk' && (
-        <div className="space-y-6">
+        <div role="tabpanel" id="risk-panel" aria-labelledby="risk-tab" className="space-y-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
               { label: 'Beta',         value: '0.87' },

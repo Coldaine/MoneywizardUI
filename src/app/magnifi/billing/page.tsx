@@ -131,7 +131,9 @@ export default function BillingPage() {
               <th className="text-left pb-2 font-semibold" style={{ color: '#606060' }}>Date</th>
               <th className="text-left pb-2 font-semibold" style={{ color: '#606060' }}>Amount</th>
               <th className="text-left pb-2 font-semibold" style={{ color: '#606060' }}>Status</th>
-              <th className="text-right pb-2 font-semibold" style={{ color: '#606060' }}></th>
+              <th className="text-right pb-2 font-semibold" style={{ color: '#606060' }}>
+                <span className="sr-only">Actions</span>
+              </th>
             </tr>
           </thead>
           <tbody>

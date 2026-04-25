@@ -20,7 +20,7 @@ export default function RootLayout({
 }>) {
   const [isAssistantOpen, setIsAssistantOpen] = useState(false);
   const pathname = usePathname();
-  const isMagnifi = pathname.startsWith('/magnifi');
+  const isMagnifi = pathname === '/magnifi' || (pathname?.startsWith('/magnifi/') ?? false);
 
   return (
     <html lang="en">

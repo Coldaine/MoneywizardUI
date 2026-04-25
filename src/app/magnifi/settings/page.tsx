@@ -5,11 +5,11 @@ import { useState } from 'react';
 interface ToggleRowProps {
   label: string;
   description: string;
-  enabled: boolean;
-  onToggle: () => void;
+  checked: boolean;
+  onChange: () => void;
 }
 
-function ToggleRow({ label, description, enabled, onToggle }: ToggleRowProps) {
+function ToggleRow({ label, description, checked, onChange }: ToggleRowProps) {
   return (
     <div className="flex items-center justify-between py-3 border-b last:border-b-0" style={{ borderColor: '#F0F0F0' }}>
       <div className="flex-1 pr-4">
@@ -17,15 +17,16 @@ function ToggleRow({ label, description, enabled, onToggle }: ToggleRowProps) {
         <p className="text-xs mt-0.5" style={{ color: '#606060' }}>{description}</p>
       </div>
       <button
-        onClick={onToggle}
-        className="relative flex-shrink-0 w-11 h-6 rounded-full transition-colors duration-200 focus:outline-none"
-        style={{ background: enabled ? '#E0CD72' : '#D1D5DB' }}
-        aria-checked={enabled}
+        onClick={onChange}
+        className="relative flex-shrink-0 w-11 h-6 rounded-full transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-[#E0CD72] focus-visible:ring-offset-1"
+        style={{ background: checked ? '#E0CD72' : '#D1D5DB' }}
+        aria-checked={checked}
+        aria-label={label}
         role="switch"
       >
         <span
           className="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200"
-          style={{ transform: enabled ? 'translateX(20px)' : 'translateX(0)' }}
+          style={{ transform: checked ? 'translateX(20px)' : 'translateX(0)' }}
         />
       </button>
     </div>
@@ -44,6 +45,8 @@ export default function SettingsPage() {
   const [theme, setTheme] = useState<'Light' | 'Dark' | 'System'>('Light');
   const [timeRange, setTimeRange] = useState<'1M' | '3M' | '6M' | '1Y' | 'All'>('1Y');
   const [showCents, setShowCents] = useState(true);
+  const [currency, setCurrency] = useState('USD');
+  const [dateFormat, setDateFormat] = useState('MM/DD/YYYY');
 
   function toggle(key: keyof typeof notifications) {
     setNotifications((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -63,32 +66,32 @@ export default function SettingsPage() {
         <ToggleRow
           label="Portfolio Alerts"
           description="Get notified when your portfolio moves more than 2%"
-          enabled={notifications.portfolioAlerts}
-          onToggle={() => toggle('portfolioAlerts')}
+          checked={notifications.portfolioAlerts}
+          onChange={() => toggle('portfolioAlerts')}
         />
         <ToggleRow
           label="News Digest"
           description="Daily market summary emails"
-          enabled={notifications.newsDigest}
-          onToggle={() => toggle('newsDigest')}
+          checked={notifications.newsDigest}
+          onChange={() => toggle('newsDigest')}
         />
         <ToggleRow
           label="Earnings Calendar"
           description="Alerts for earnings in your holdings"
-          enabled={notifications.earningsCalendar}
-          onToggle={() => toggle('earningsCalendar')}
+          checked={notifications.earningsCalendar}
+          onChange={() => toggle('earningsCalendar')}
         />
         <ToggleRow
           label="Price Targets"
           description="Alert when a stock hits your target price"
-          enabled={notifications.priceTargets}
-          onToggle={() => toggle('priceTargets')}
+          checked={notifications.priceTargets}
+          onChange={() => toggle('priceTargets')}
         />
         <ToggleRow
           label="Rebalancing Reminders"
           description="Monthly rebalancing suggestions"
-          enabled={notifications.rebalancingReminders}
-          onToggle={() => toggle('rebalancingReminders')}
+          checked={notifications.rebalancingReminders}
+          onChange={() => toggle('rebalancingReminders')}
         />
       </div>
 
@@ -103,7 +106,8 @@ export default function SettingsPage() {
             <select
               className="text-sm border rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2"
               style={{ borderColor: '#E5E7EB', color: '#030F12' }}
-              defaultValue="USD"
+              value={currency}
+              onChange={(e) => setCurrency(e.target.value)}
             >
               <option value="USD">USD — US Dollar</option>
               <option value="EUR">EUR — Euro</option>
@@ -117,11 +121,12 @@ export default function SettingsPage() {
             <select
               className="text-sm border rounded-lg px-3 py-1.5 focus:outline-none"
               style={{ borderColor: '#E5E7EB', color: '#030F12' }}
-              defaultValue="MMDDYYYY"
+              value={dateFormat}
+              onChange={(e) => setDateFormat(e.target.value)}
             >
-              <option value="MMDDYYYY">MM/DD/YYYY</option>
-              <option value="DDMMYYYY">DD/MM/YYYY</option>
-              <option value="YYYYMMDD">YYYY-MM-DD</option>
+              <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+              <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+              <option value="YYYY-MM-DD">YYYY-MM-DD</option>
             </select>
           </div>
 
@@ -167,24 +172,14 @@ export default function SettingsPage() {
             </div>
           </div>
 
-          {/* Show cents */}
-          <div className="flex items-center justify-between pt-1 border-t" style={{ borderColor: '#F0F0F0' }}>
-            <div>
-              <p className="text-sm font-medium text-[#030F12]">Show cents</p>
-              <p className="text-xs" style={{ color: '#606060' }}>Display decimal places in currency values</p>
-            </div>
-            <button
-              onClick={() => setShowCents((v) => !v)}
-              className="relative flex-shrink-0 w-11 h-6 rounded-full transition-colors duration-200"
-              style={{ background: showCents ? '#E0CD72' : '#D1D5DB' }}
-              role="switch"
-              aria-checked={showCents}
-            >
-              <span
-                className="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200"
-                style={{ transform: showCents ? 'translateX(20px)' : 'translateX(0)' }}
-              />
-            </button>
+          {/* Show cents — uses ToggleRow to avoid duplication */}
+          <div className="pt-1 border-t" style={{ borderColor: '#F0F0F0' }}>
+            <ToggleRow
+              label="Show cents"
+              description="Display decimal places in currency values"
+              checked={showCents}
+              onChange={() => setShowCents((v) => !v)}
+            />
           </div>
         </div>
       </div>

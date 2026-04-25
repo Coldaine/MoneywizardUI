@@ -5,10 +5,16 @@ import { useState } from 'react';
 const RANGES = ['1D', '1W', '1M', '3M', '1Y', 'All'] as const;
 type Range = typeof RANGES[number];
 
-// 1Y monthly portfolio values (in $k) and S&P index values
-const PORTFOLIO_PTS = [210, 214, 209, 218, 222, 219, 226, 230, 228, 235, 238, 241];
-const SP500_PTS     = [208, 211, 207, 215, 218, 216, 221, 225, 224, 228, 231, 235];
-const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+type Dataset = { portfolio: number[]; sp500: number[]; months: string[] };
+
+const DATASETS: Record<Range, Dataset> = {
+  '1D':  { portfolio: [241200, 241350, 241100, 241856], sp500: [5240, 5245, 5238, 5247], months: ['9am','11am','1pm','3pm'] },
+  '1W':  { portfolio: [238000, 239500, 240200, 241856], sp500: [5195, 5215, 5228, 5247], months: ['Mon','Tue','Wed','Thu'] },
+  '1M':  { portfolio: [228000, 232000, 236000, 241856], sp500: [5100, 5150, 5200, 5247], months: ['Mar 25','Apr 4','Apr 14','Apr 25'] },
+  '3M':  { portfolio: [218000, 225000, 233000, 241856], sp500: [5020, 5080, 5160, 5247], months: ['Jan','Feb','Mar','Apr'] },
+  '1Y':  { portfolio: [210000,212000,215000,218000,221000,225000,228000,232000,235000,237000,239000,241856], sp500: [4600,4680,4750,4820,4900,4980,5050,5100,5150,5200,5230,5247], months: ['May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr'] },
+  'All': { portfolio: [150000,165000,178000,195000,210000,225000,241856], sp500: [4100,4300,4500,4700,4900,5100,5247], months: ['2020','2021','2022','2023','2024','2025','2026'] },
+};
 
 const MONTHLY_RETURNS = [
   { month: 'Jan', port: '+1.9%', sp: '+1.4%', diff: '+0.5%', pos: true },
@@ -25,33 +31,33 @@ const MONTHLY_RETURNS = [
   { month: 'Dec', port: '+1.3%', sp: '+1.7%', diff: '-0.4%', pos: false },
 ];
 
-// SVG helpers — map data arrays into SVG polyline points
+// SVG constants
 const W = 520;
 const H = 180;
 const PAD = { l: 48, r: 16, t: 12, b: 28 };
 const innerW = W - PAD.l - PAD.r;
 const innerH = H - PAD.t - PAD.b;
 
-function toPoints(data: number[]): string {
-  const min = Math.min(...data) - 3;
-  const max = Math.max(...data) + 3;
-  return data
-    .map((v, i) => {
-      const x = PAD.l + (i / (data.length - 1)) * innerW;
-      const y = PAD.t + innerH - ((v - min) / (max - min)) * innerH;
-      return `${x},${y}`;
-    })
+function scalePoints(
+  data: number[],
+  allData: number[],
+): { x: number; y: number }[] {
+  const min = Math.min(...allData) - 3;
+  const max = Math.max(...allData) + 3;
+  return data.map((v, i) => ({
+    x: PAD.l + (i / (data.length - 1)) * innerW,
+    y: PAD.t + innerH - ((v - min) / (max - min)) * innerH,
+  }));
+}
+
+function toPoints(data: number[], allData: number[]): string {
+  return scalePoints(data, allData)
+    .map((p) => `${p.x},${p.y}`)
     .join(' ');
 }
 
-function toAreaPath(data: number[]): string {
-  const min = Math.min(...data) - 3;
-  const max = Math.max(...data) + 3;
-  const pts = data.map((v, i) => {
-    const x = PAD.l + (i / (data.length - 1)) * innerW;
-    const y = PAD.t + innerH - ((v - min) / (max - min)) * innerH;
-    return `${x},${y}`;
-  });
+function toAreaPath(data: number[], allData: number[]): string {
+  const pts = scalePoints(data, allData).map((p) => `${p.x},${p.y}`);
   const bottom = PAD.t + innerH;
   return `M${PAD.l},${bottom} L${pts.join(' L')} L${PAD.l + innerW},${bottom} Z`;
 }
@@ -59,9 +65,11 @@ function toAreaPath(data: number[]): string {
 export default function PerformancePage() {
   const [range, setRange] = useState<Range>('1Y');
 
-  const portfolioPoints = toPoints(PORTFOLIO_PTS);
-  const sp500Points     = toPoints(SP500_PTS);
-  const areaPath        = toAreaPath(PORTFOLIO_PTS);
+  const { portfolio, sp500, months } = DATASETS[range];
+  const allData = [...portfolio, ...sp500];
+  const portfolioPoints = toPoints(portfolio, allData);
+  const sp500Points     = toPoints(sp500, allData);
+  const areaPath        = toAreaPath(portfolio, allData);
 
   return (
     <div className="space-y-6 max-w-5xl">
@@ -138,10 +146,10 @@ export default function PerformancePage() {
           })}
 
           {/* Month labels */}
-          {MONTHS.map((m, i) => (
+          {months.map((m, i) => (
             <text
               key={m}
-              x={PAD.l + (i / (MONTHS.length - 1)) * innerW}
+              x={PAD.l + (i / (months.length - 1)) * innerW}
               y={H - 6}
               fontSize={9}
               fill="#9CA3AF"

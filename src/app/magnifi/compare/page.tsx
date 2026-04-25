@@ -7,12 +7,23 @@ interface Asset {
   color: string;
 }
 
+const colors = ['#E0CD72', '#0797B9', '#16B548', '#F5441D', '#9B59B6', '#F5A623'];
+
 const INITIAL_ASSETS: Asset[] = [
   { ticker: 'AAPL', color: '#E0CD72' },
   { ticker: 'NVDA', color: '#0797B9' },
 ];
 
 const AVAILABLE_ASSETS = ['MSFT', 'TSLA', 'VTI', 'GOOGL'];
+
+const TICKER_DATA: Record<string, number[]> = {
+  AAPL:  [0, 2, 1, 3, 5, 8, 10, 12, 14, 15, 17, 18.2],
+  NVDA:  [0, 8, 15, 22, 35, 48, 55, 62, 70, 78, 83, 87.3],
+  MSFT:  [0, 1, 3, 5, 7, 9, 11, 12, 13, 14, 15, 16.7],
+  TSLA:  [0, -5, -8, -3, 2, -2, 5, 8, 3, -2, 1, -4.2],
+  VTI:   [0, 1, 2, 4, 5, 6, 7, 8, 9, 10, 10.5, 11.4],
+  GOOGL: [0, 2, 4, 6, 8, 10, 12, 13, 14, 14.5, 15, 16.1],
+};
 
 interface FundamentalRow {
   metric: string;
@@ -36,12 +47,6 @@ const fundamentals: FundamentalRow[] = [
 
 // Normalized % return data over 12 months — NVDA dramatically outperforms
 const months = ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'];
-
-// AAPL: modest upward trend ~+18% over the year
-const aaplData = [0, 2, 4, 6, 3, 7, 9, 11, 13, 15, 17, 18.2];
-
-// NVDA: dramatic surge ~+87% over the year
-const nvdaData = [0, 5, 12, 20, 15, 28, 40, 55, 65, 72, 80, 87.3];
 
 const CHART_W = 580;
 const CHART_H = 220;
@@ -73,15 +78,16 @@ export default function ComparePage() {
   }
 
   function addAsset(ticker: string) {
-    const colors = ['#16B548', '#F5441D'];
-    const color = colors[assets.length - 2] ?? '#9CA3AF';
+    const usedColors = assets.map((a) => a.color);
+    const color = colors.find((c) => !usedColors.includes(c)) ?? '#9CA3AF';
     setAssets((prev) => [...prev, { ticker, color }]);
     setShowAddMenu(false);
   }
 
-  const allY = [...aaplData, ...nvdaData];
-  const minY = Math.min(...allY) - 5;
-  const maxY = Math.max(...allY) + 5;
+  // Compute minY/maxY across all active asset data
+  const allY = assets.flatMap((a) => TICKER_DATA[a.ticker] ?? [0]);
+  const minY = Math.min(...allY, 0) - 5;
+  const maxY = Math.max(...allY, 0) + 5;
 
   // Y-axis tick values
   const yTicks = [0, 25, 50, 75, 87];
@@ -210,47 +216,37 @@ export default function ComparePage() {
               </text>
             ))}
 
-            {/* AAPL line */}
-            {assets.find((a) => a.ticker === 'AAPL') && (
-              <polyline
-                points={polyline(aaplData, minY, maxY)}
-                fill="none"
-                stroke="#E0CD72"
-                strokeWidth={2.5}
-                strokeLinejoin="round"
-                strokeLinecap="round"
-              />
-            )}
+            {/* Dynamic polylines for all active assets */}
+            {assets.map((asset) => {
+              const data = TICKER_DATA[asset.ticker];
+              if (!data) return null;
+              return (
+                <polyline
+                  key={asset.ticker}
+                  points={polyline(data, minY, maxY)}
+                  fill="none"
+                  stroke={asset.color}
+                  strokeWidth={2.5}
+                  strokeLinejoin="round"
+                  strokeLinecap="round"
+                />
+              );
+            })}
 
-            {/* NVDA line */}
-            {assets.find((a) => a.ticker === 'NVDA') && (
-              <polyline
-                points={polyline(nvdaData, minY, maxY)}
-                fill="none"
-                stroke="#0797B9"
-                strokeWidth={2.5}
-                strokeLinejoin="round"
-                strokeLinecap="round"
-              />
-            )}
-
-            {/* End-point dots */}
-            {assets.find((a) => a.ticker === 'AAPL') && (
-              <circle
-                cx={toX(months.length - 1)}
-                cy={toY(aaplData[aaplData.length - 1], minY, maxY)}
-                r={4}
-                fill="#E0CD72"
-              />
-            )}
-            {assets.find((a) => a.ticker === 'NVDA') && (
-              <circle
-                cx={toX(months.length - 1)}
-                cy={toY(nvdaData[nvdaData.length - 1], minY, maxY)}
-                r={4}
-                fill="#0797B9"
-              />
-            )}
+            {/* End-point dots for all active assets */}
+            {assets.map((asset) => {
+              const data = TICKER_DATA[asset.ticker];
+              if (!data) return null;
+              return (
+                <circle
+                  key={asset.ticker}
+                  cx={toX(months.length - 1)}
+                  cy={toY(data[data.length - 1], minY, maxY)}
+                  r={4}
+                  fill={asset.color}
+                />
+              );
+            })}
           </svg>
         </div>
       </div>

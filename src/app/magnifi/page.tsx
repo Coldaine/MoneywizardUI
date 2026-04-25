@@ -1,4 +1,6 @@
 export default function MagnifiDashboard() {
+  const asOfDate = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
   const quickActions = [
     'How am I doing?',
     'Show my top holdings',
@@ -29,7 +31,7 @@ export default function MagnifiDashboard() {
         style={{ background: '#030F12' }}
       >
         <p className="text-sm font-medium mb-1" style={{ color: '#606060' }}>
-          Total Portfolio Value &mdash; As of Apr 25, 2026
+          Total Portfolio Value &mdash; As of {asOfDate}
         </p>
         <p
           className="text-5xl font-bold tracking-tight mb-2"

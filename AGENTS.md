@@ -19,6 +19,7 @@ A personal finance dashboard. All 12 screens are **already implemented and merge
 **CSS classes:** `card-monarch`, `sidebar-monarch`, `text-secondary`, `text-foreground`
 
 ### Completed screens
+
 | Route | Page |
 |-------|------|
 | `/` | Dashboard |
@@ -42,6 +43,7 @@ A personal finance dashboard. All 12 screens are **already implemented and merge
 **Nothing has been built yet.** Magnifi is an AI-powered investment advisor platform — a full second product that lives under the `/magnifi/` route prefix inside this same Next.js app. It is **not** a minor addition to the Investments page; it is a complete, standalone experience with its own sidebar, design system, and feature set.
 
 ### Design system
+
 | Token | Value | Use |
 |-------|-------|-----|
 | Primary accent | `#E0CD72` | CTAs, links, gold branding |
@@ -59,6 +61,7 @@ A personal finance dashboard. All 12 screens are **already implemented and merge
 - **Layout:** 8-point grid, standard responsive breakpoints (sm/md/lg/xl)
 
 ### Screens to build
+
 All routes are prefixed with `/magnifi/`.
 
 | Route | Screen | Key features |
@@ -85,12 +88,14 @@ All routes are prefixed with `/magnifi/`.
 | `/magnifi/documents` | **Documents** | Tax documents (1099s), trade confirms, account statements list |
 
 ### Layout requirements
+
 - Magnifi has its **own sidebar** — do not use the Monarch `Sidebar` component
 - The Magnifi sidebar uses the dark `#030F12` background with `#E0CD72` gold active states and icon+label pairs
 - The Monarch sidebar should gain a "Magnifi" entry (or section divider) that links to `/magnifi`
 - All Magnifi pages use a top-level layout at `src/app/magnifi/layout.tsx` that renders the Magnifi sidebar instead of the Monarch sidebar
 
 ### Implementation rules
+
 - All data is **mocked** — no real API calls, no backend
 - Use SVG or inline CSS for charts (no new npm chart libraries)
 - No new npm dependencies without a compelling reason
@@ -99,7 +104,13 @@ All routes are prefixed with `/magnifi/`.
 - Reuse Tailwind utility classes; define Magnifi-specific CSS vars in `globals.css` under a `.magnifi` scope or `:root` additions
 
 ### Source material
-The full Magnifi spec lives in `../Creating a Title from Uploaded File Content (1).zip` (one level above this repo). Key files inside:
+
+The full Magnifi spec lives in a zip file one directory above the repo root (`D:/_projects/Monarch/Creating a Title from Uploaded File Content (1).zip`).
+
+Note: this zip is not committed to the repository and lives at `../Creating a Title from Uploaded File Content (1).zip` relative to the repo root.
+
+Key files inside:
+
 - `Magnifi Navigation Surface Map.md` — complete route list
 - `Magnifi Design System Summary.md` — color tokens, typography, components
 - `Magnifi Feature Inventory.md` — per-screen feature breakdown

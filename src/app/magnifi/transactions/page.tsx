@@ -26,16 +26,26 @@ const ACCOUNTS = ['All Accounts', 'Fidelity', 'Robinhood', 'Coinbase'];
 const TYPES    = ['All', 'Buy', 'Sell', 'Dividend', 'Transfer'];
 const DATES    = ['Last 30 days', 'Last 60 days', 'Last 90 days', 'Year to date'];
 
+interface Filters {
+  account: string;
+  type: string;
+  date: string;
+}
+
+const DEFAULT_FILTERS: Filters = { account: 'All Accounts', type: 'All', date: 'Last 30 days' };
+
 export default function TransactionsPage() {
-  const [account, setAccount] = useState('All Accounts');
-  const [type,    setType]    = useState('All');
-  const [date,    setDate]    = useState('Last 30 days');
+  const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS);
+  const [pendingFilters, setPendingFilters] = useState<Filters>(DEFAULT_FILTERS);
+  const [visibleCount, setVisibleCount] = useState(10);
 
   const filtered = allTransactions.filter((t) => {
-    if (account !== 'All Accounts' && t.account !== account) return false;
-    if (type    !== 'All'          && t.type    !== type)    return false;
+    if (filters.account !== 'All Accounts' && t.account !== filters.account) return false;
+    if (filters.type !== 'All' && t.type !== filters.type) return false;
     return true;
   });
+
+  const visible = filtered.slice(0, visibleCount);
 
   return (
     <div className="space-y-6 max-w-5xl">
@@ -47,10 +57,26 @@ export default function TransactionsPage() {
 
       {/* Filter bar */}
       <div className="card-magnifi flex flex-wrap gap-3 items-center">
-        <Select label="Account" value={account} options={ACCOUNTS} onChange={setAccount} />
-        <Select label="Type"    value={type}    options={TYPES}    onChange={setType}    />
-        <Select label="Date"    value={date}    options={DATES}    onChange={setDate}    />
+        <Select
+          label="Account"
+          value={pendingFilters.account}
+          options={ACCOUNTS}
+          onChange={(v) => setPendingFilters((f) => ({ ...f, account: v }))}
+        />
+        <Select
+          label="Type"
+          value={pendingFilters.type}
+          options={TYPES}
+          onChange={(v) => setPendingFilters((f) => ({ ...f, type: v }))}
+        />
+        <Select
+          label="Date"
+          value={pendingFilters.date}
+          options={DATES}
+          onChange={(v) => setPendingFilters((f) => ({ ...f, date: v }))}
+        />
         <button
+          onClick={() => { setFilters(pendingFilters); setVisibleCount(10); }}
           className="ml-auto rounded-full bg-[#E0CD72] text-[#030F12] font-semibold px-5 py-2 text-sm hover:bg-[#E7C751] transition-colors"
         >
           Apply Filters
@@ -78,7 +104,7 @@ export default function TransactionsPage() {
             </tr>
           </thead>
           <tbody>
-            {filtered.map((t, i) => {
+            {visible.map((t, i) => {
               const badge = BADGE[t.type] ?? BADGE.Transfer;
               return (
                 <tr
@@ -109,11 +135,17 @@ export default function TransactionsPage() {
         {/* Pagination */}
         <div className="mt-5 pt-4 flex items-center justify-between" style={{ borderTop: '1px solid #F0F0F0' }}>
           <p className="text-sm" style={{ color: '#606060' }}>
-            Showing {filtered.length} of 47 transactions
+            Showing {visible.length} of {filtered.length} transactions
           </p>
-          <button className="rounded-full border font-semibold text-sm px-5 py-2 hover:bg-[#E0CD72] hover:text-[#030F12] transition-colors" style={{ borderColor: '#E0CD72', color: '#B89A00' }}>
-            Load more
-          </button>
+          {visibleCount < filtered.length && (
+            <button
+              onClick={() => setVisibleCount((c) => c + 10)}
+              className="rounded-full border font-semibold text-sm px-5 py-2 hover:bg-[#E0CD72] hover:text-[#030F12] transition-colors"
+              style={{ borderColor: '#E0CD72', color: '#B89A00' }}
+            >
+              Load more
+            </button>
+          )}
         </div>
       </div>
     </div>
@@ -137,8 +169,8 @@ function Select({
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="border rounded-lg px-3 py-1.5 text-sm text-[#030F12] bg-white focus:outline-none focus:ring-2 cursor-pointer"
-        style={{ borderColor: '#E0E0E0', focusRingColor: '#E0CD72' } as React.CSSProperties}
+        className="border rounded-lg px-3 py-1.5 text-sm text-[#030F12] bg-white focus:outline-none focus:ring-2 focus:ring-[#E0CD72] cursor-pointer"
+        style={{ borderColor: '#E0E0E0' }}
       >
         {options.map((o) => <option key={o}>{o}</option>)}
       </select>

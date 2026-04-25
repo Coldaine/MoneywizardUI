@@ -10,9 +10,27 @@ const impactRows = [
   { contrib: '$3,000/mo', final: '$2.75M' },
 ];
 
+function fmtM(n: number) {
+  return '$' + (n / 1_000_000).toFixed(1) + 'M';
+}
+
 // Build SVG projection bands
 function buildBands(startAge: number, retireAge: number, contrib: number, rate: number) {
   const years = retireAge - startAge;
+  if (years <= 0) {
+    return {
+      baseLine: '',
+      topArea: '',
+      bottomArea: '',
+      finalBase: [0, 0] as [number, number],
+      finalOpt:  [0, 0] as [number, number],
+      finalPess: [0, 0] as [number, number],
+      xLabels: [{ label: new Date().getFullYear().toString(), x: 0 }],
+      W: 460,
+      H: 200,
+    };
+  }
+
   const currentYear = 2026;
   const W = 460;
   const H = 200;
@@ -78,13 +96,32 @@ export default function PlannerPage() {
   const [contrib,    setContrib]       = useState(2000);
   const [rate,       setRate]          = useState(7);
   const [expenses,   setExpenses]      = useState(6000);
-  const [computed,   setComputed]      = useState(false);
 
-  const chart = buildBands(currentAge, retireAge, contrib, rate);
-  const swrIncome = Math.round((2_100_000 * 0.04) / 12).toLocaleString();
+  // Committed values — chart only updates when user clicks Recalculate
+  const [applied, setApplied] = useState({
+    currentAge: 38,
+    retireAge: 65,
+    contrib: 2000,
+    rate: 7,
+    expenses: 6000,
+  });
+
+  const chart = buildBands(applied.currentAge, applied.retireAge, applied.contrib, applied.rate);
+
+  // Derive final values from chart results
+  const finalBaseVal = 241_856 * Math.pow(1 + applied.rate / 100, applied.retireAge - applied.currentAge) +
+    applied.contrib * 12 * ((Math.pow(1 + applied.rate / 100, applied.retireAge - applied.currentAge) - 1) / (applied.rate / 100));
+  const finalOptVal  = 241_856 * Math.pow(1 + (applied.rate + 3) / 100, applied.retireAge - applied.currentAge) +
+    (applied.contrib + 500) * 12 * ((Math.pow(1 + (applied.rate + 3) / 100, applied.retireAge - applied.currentAge) - 1) / ((applied.rate + 3) / 100));
+  const finalPessVal = 241_856 * Math.pow(1 + Math.max(applied.rate - 3, 1) / 100, applied.retireAge - applied.currentAge) +
+    Math.max(applied.contrib - 200, 0) * 12 * ((Math.pow(1 + Math.max(applied.rate - 3, 1) / 100, applied.retireAge - applied.currentAge) - 1) / (Math.max(applied.rate - 3, 1) / 100));
+
+  const retirementTarget = Math.round(applied.expenses * 12 / 0.04 / 100_000) * 100_000;
+  const swrIncome = Math.round((finalBaseVal * 0.04) / 12).toLocaleString();
+  const probability = Math.min(99, Math.max(10, Math.round(60 + (applied.rate - 4) * 5 + (applied.contrib - 500) / 100)));
 
   function handleRecalculate() {
-    setComputed((v) => !v); // triggers re-render with latest slider values
+    setApplied({ currentAge, retireAge, contrib, rate, expenses });
   }
 
   return (
@@ -110,7 +147,7 @@ export default function PlannerPage() {
           <SliderField
             label="Retirement Age"
             value={retireAge}
-            min={55} max={80}
+            min={currentAge + 1} max={80}
             display={`${retireAge} yrs`}
             onChange={setRetireAge}
           />
@@ -149,7 +186,7 @@ export default function PlannerPage() {
           {/* Projection chart */}
           <div className="card-magnifi">
             <h2 className="text-base font-semibold mb-4 text-[#030F12]">
-              Projection: {2026} – {2026 + (retireAge - currentAge)}
+              Projection: {2026} – {2026 + (applied.retireAge - applied.currentAge)}
             </h2>
             <svg
               width="100%"
@@ -175,10 +212,10 @@ export default function PlannerPage() {
                 {/* Base line */}
                 <path d={chart.baseLine} fill="none" stroke="#E0CD72" strokeWidth={2.5} />
 
-                {/* Final value labels */}
-                <text x={chart.finalOpt[0]  + 4} y={chart.finalOpt[1]  - 4} fontSize={9} fill="#B89A00">Opt. $3.1M</text>
-                <text x={chart.finalBase[0] + 4} y={chart.finalBase[1] - 4} fontSize={9} fill="#E0CD72">Base $2.1M</text>
-                <text x={chart.finalPess[0] + 4} y={chart.finalPess[1] + 12} fontSize={9} fill="#999">Pess. $1.4M</text>
+                {/* Final value labels — dynamic from computed values */}
+                <text x={chart.finalOpt[0]  + 4} y={chart.finalOpt[1]  - 4} fontSize={9} fill="#B89A00">Opt. {fmtM(finalOptVal)}</text>
+                <text x={chart.finalBase[0] + 4} y={chart.finalBase[1] - 4} fontSize={9} fill="#E0CD72">Base {fmtM(finalBaseVal)}</text>
+                <text x={chart.finalPess[0] + 4} y={chart.finalPess[1] + 12} fontSize={9} fill="#999">Pess. {fmtM(finalPessVal)}</text>
 
                 {/* X-axis labels */}
                 {chart.xLabels.map((l) => (
@@ -193,7 +230,7 @@ export default function PlannerPage() {
               className="mt-3 rounded-xl px-4 py-2.5 text-sm font-medium"
               style={{ background: 'rgba(224,205,114,0.12)', color: '#030F12' }}
             >
-              At <strong>$2.1M</strong> with 4% SWR = <strong>${swrIncome}/mo</strong> in retirement income
+              At <strong>{fmtM(finalBaseVal)}</strong> with 4% SWR = <strong>${swrIncome}/mo</strong> in retirement income
             </div>
           </div>
 
@@ -207,10 +244,10 @@ export default function PlannerPage() {
                 Based on 1,000 simulations
               </p>
               <p className="text-base text-white">
-                Probability of meeting your <span style={{ color: '#E0CD72' }}>$2,000,000</span> target:
+                Probability of meeting your <span style={{ color: '#E0CD72' }}>{fmtM(retirementTarget)}</span> target:
               </p>
             </div>
-            <p className="text-5xl font-bold ml-auto sm:ml-0" style={{ color: '#E0CD72' }}>82%</p>
+            <p className="text-5xl font-bold ml-auto sm:ml-0" style={{ color: '#E0CD72' }}>{probability}%</p>
           </div>
 
           {/* Contribution impact table */}
@@ -220,7 +257,7 @@ export default function PlannerPage() {
               <thead>
                 <tr style={{ borderBottom: '2px solid #F0F0F0' }}>
                   <th className="pb-2 text-left font-semibold" style={{ color: '#606060' }}>Monthly Contribution</th>
-                  <th className="pb-2 text-left font-semibold" style={{ color: '#606060' }}>Projected Balance at {2026 + (retireAge - currentAge)}</th>
+                  <th className="pb-2 text-left font-semibold" style={{ color: '#606060' }}>Projected Balance at {2026 + (applied.retireAge - applied.currentAge)}</th>
                 </tr>
               </thead>
               <tbody>

@@ -80,12 +80,12 @@ function buildProjectionPath(width: number, height: number) {
   return { basePath: toPath(basePoints), targetPath: toPath(targetPoints), areaPath };
 }
 
-const { basePath, targetPath, areaPath } = buildProjectionPath(460, 160);
+const { basePath, targetPath, areaPath } = buildProjectionPath(490, 160);
 
 const milestones = [
-  { label: '$500K', x: 115 },
-  { label: '$1M',   x: 230 },
-  { label: '$2M',   x: 460 },
+  { label: '$500K', x: Math.round((490 / 20) * 5) },
+  { label: '$1M',   x: Math.round((490 / 20) * 10) },
+  { label: '$2M',   x: 490 },
 ];
 
 export default function GoalsPage() {

@@ -28,7 +28,7 @@ const opportunities = [
 const docStatus = [
   { name: '1099-B',   status: 'Available',              available: true,  note: '' },
   { name: '1099-DIV', status: 'Available',              available: true,  note: '' },
-  { name: '1099-INT', status: 'Pending',                available: false, note: 'Expected Feb 2026' },
+  { name: '1099-INT', status: 'Pending',                available: false, note: 'Expected May 2026' },
 ];
 
 export default function TaxPage() {

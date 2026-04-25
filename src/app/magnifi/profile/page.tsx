@@ -160,7 +160,7 @@ export default function ProfilePage() {
           <div className="flex items-center justify-between py-2">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold" style={{ background: '#000000', color: '#FFFFFF' }}>
-
+                <span aria-hidden="true" className="text-white font-bold text-xs">A</span>
               </div>
               <div>
                 <p className="text-sm font-medium text-[#030F12]">Apple ID</p>

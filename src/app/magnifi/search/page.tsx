@@ -137,13 +137,13 @@ export default function SearchPage() {
               <p className="text-xs leading-relaxed flex-1" style={{ color: '#606060' }}>
                 {card.description}
               </p>
-              <a
-                href="#"
-                className="text-xs font-semibold"
+              <button
+                type="button"
+                className="text-xs font-semibold text-left"
                 style={{ color: '#E0CD72' }}
               >
                 Explore →
-              </a>
+              </button>
             </div>
           ))}
         </div>
@@ -211,9 +211,9 @@ export default function SearchPage() {
               <p className="text-xs leading-relaxed flex-1" style={{ color: '#606060' }}>
                 {col.description}
               </p>
-              <a href="#" className="text-xs font-semibold" style={{ color: '#E0CD72' }}>
+              <button type="button" className="text-xs font-semibold text-left" style={{ color: '#E0CD72' }}>
                 Explore →
-              </a>
+              </button>
             </div>
           ))}
         </div>

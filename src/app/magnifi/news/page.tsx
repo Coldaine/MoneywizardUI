@@ -12,6 +12,8 @@ interface Article {
   source: string;
   time: string;
   sentiment: Sentiment;
+  type: 'stock' | 'etf' | 'crypto' | 'market';
+  tags: string[];
 }
 
 const featuredArticle = {
@@ -30,6 +32,8 @@ const articles: Article[] = [
     source: 'CNBC',
     time: '3h ago',
     sentiment: 'Positive',
+    type: 'stock',
+    tags: ['NVDA'],
   },
   {
     id: 2,
@@ -37,6 +41,8 @@ const articles: Article[] = [
     source: 'Reuters',
     time: '5h ago',
     sentiment: 'Negative',
+    type: 'stock',
+    tags: ['AAPL'],
   },
   {
     id: 3,
@@ -44,6 +50,8 @@ const articles: Article[] = [
     source: 'Morningstar',
     time: '6h ago',
     sentiment: 'Positive',
+    type: 'etf',
+    tags: ['VTI'],
   },
   {
     id: 4,
@@ -51,6 +59,8 @@ const articles: Article[] = [
     source: 'CoinDesk',
     time: '8h ago',
     sentiment: 'Negative',
+    type: 'crypto',
+    tags: [],
   },
   {
     id: 5,
@@ -58,6 +68,8 @@ const articles: Article[] = [
     source: 'WSJ',
     time: '9h ago',
     sentiment: 'Positive',
+    type: 'market',
+    tags: [],
   },
   {
     id: 6,
@@ -65,6 +77,8 @@ const articles: Article[] = [
     source: 'Reuters',
     time: '12h ago',
     sentiment: 'Negative',
+    type: 'stock',
+    tags: ['TSLA'],
   },
 ];
 
@@ -96,6 +110,20 @@ export default function NewsPage() {
       prev.includes(ticker) ? prev.filter((t) => t !== ticker) : [...prev, ticker]
     );
   }
+
+  const filteredArticles = articles.filter((article) => {
+    if (activeTab === 'All') return true;
+    if (activeTab === 'Stocks') return article.type === 'stock';
+    if (activeTab === 'ETFs') return article.type === 'etf';
+    if (activeTab === 'Crypto') return article.type === 'crypto';
+    if (activeTab === 'Markets') return article.type === 'market';
+    if (activeTab === 'Your Holdings') {
+      return checkedHoldings.length === 0
+        ? true
+        : checkedHoldings.some((ticker) => article.tags.includes(ticker));
+    }
+    return true;
+  });
 
   return (
     <div className="max-w-5xl">
@@ -139,18 +167,18 @@ export default function NewsPage() {
             <p className="text-sm leading-relaxed" style={{ color: '#9CA3AF' }}>
               {featuredArticle.subheadline}
             </p>
-            <a
-              href="#"
+            <button
+              type="button"
               className="inline-block mt-4 text-sm font-semibold"
               style={{ color: '#E0CD72' }}
             >
               Read more →
-            </a>
+            </button>
           </div>
 
           {/* News feed */}
           <div className="space-y-3">
-            {articles.map((article) => (
+            {filteredArticles.map((article) => (
               <div
                 key={article.id}
                 className="card-magnifi flex flex-col gap-2 cursor-pointer hover:shadow-lg transition-shadow"
@@ -170,13 +198,13 @@ export default function NewsPage() {
                       · {article.time}
                     </span>
                   </div>
-                  <a
-                    href="#"
+                  <button
+                    type="button"
                     className="text-xs font-semibold"
                     style={{ color: '#E0CD72' }}
                   >
                     Read more →
-                  </a>
+                  </button>
                 </div>
               </div>
             ))}

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import type { KeyboardEvent } from 'react';
 
 interface Message {
   id: number;
@@ -61,7 +62,7 @@ export default function ChatPage() {
     setInputValue('');
   }
 
-  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+  function handleKeyDown(e: KeyboardEvent<HTMLInputElement>) {
     if (e.key === 'Enter') sendMessage();
   }
 
@@ -73,11 +74,14 @@ export default function ChatPage() {
         style={{ background: '#030F12', borderColor: '#0F2329' }}
       >
         <div className="p-4 border-b" style={{ borderColor: '#0F2329' }}>
-          <button className="w-full rounded-full bg-[#E0CD72] text-[#030F12] font-semibold px-4 py-2 text-sm hover:bg-[#E7C751] transition-colors">
+          <button
+            disabled
+            className="w-full rounded-full bg-[#E0CD72] text-[#030F12] font-semibold px-4 py-2 text-sm opacity-50 cursor-not-allowed"
+          >
             + New Chat
           </button>
         </div>
-        <div className="flex-1 overflow-y-auto py-2">
+        <div className="flex-1 overflow-y-auto py-2" title="Mock conversations — messages not loaded in demo">
           {pastConversations.map((conv) => (
             <button
               key={conv.id}
@@ -166,8 +170,7 @@ export default function ChatPage() {
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Ask Magnifi anything about your portfolio..."
-            className="flex-1 rounded-full px-5 py-2.5 text-sm border outline-none focus:border-[#E0CD72] text-[#030F12] bg-[#F4F5F7]"
-            style={{ borderColor: '#E5E7EB' }}
+            className="flex-1 rounded-full px-5 py-2.5 text-sm border border-gray-200 focus:border-[#E0CD72] focus:ring-2 focus:ring-[#E0CD72] focus:outline-none text-[#030F12] bg-[#F4F5F7]"
           />
           <button
             onClick={sendMessage}

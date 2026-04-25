@@ -6,6 +6,7 @@ interface ScreenerResult {
   name: string;
   ticker: string;
   type: string;
+  sector: string;
   marketCap: string;
   divYield: string;
   return1Y: string;
@@ -13,18 +14,18 @@ interface ScreenerResult {
   esg: string;
 }
 
-const results: ScreenerResult[] = [
-  { name: 'Apple', ticker: 'AAPL', type: 'Stock', marketCap: '$2.9T', divYield: '0.5%', return1Y: '+18.2%', returnPositive: true, esg: 'A' },
-  { name: 'Vanguard Total Market', ticker: 'VTI', type: 'ETF', marketCap: '—', divYield: '1.4%', return1Y: '+11.4%', returnPositive: true, esg: 'B+' },
-  { name: 'Microsoft', ticker: 'MSFT', type: 'Stock', marketCap: '$3.1T', divYield: '0.8%', return1Y: '+16.7%', returnPositive: true, esg: 'A' },
-  { name: 'Nvidia', ticker: 'NVDA', type: 'Stock', marketCap: '$2.2T', divYield: '0.0%', return1Y: '+87.3%', returnPositive: true, esg: 'B' },
-  { name: 'iShares MSCI ESG', ticker: 'ESGU', type: 'ETF', marketCap: '—', divYield: '1.2%', return1Y: '+9.8%', returnPositive: true, esg: 'A+' },
-  { name: 'Johnson & Johnson', ticker: 'JNJ', type: 'Stock', marketCap: '$389B', divYield: '3.1%', return1Y: '+4.2%', returnPositive: true, esg: 'A' },
-  { name: 'JPMorgan Chase', ticker: 'JPM', type: 'Stock', marketCap: '$564B', divYield: '2.3%', return1Y: '+22.1%', returnPositive: true, esg: 'B' },
-  { name: 'SPDR Gold ETF', ticker: 'GLD', type: 'ETF', marketCap: '—', divYield: '0.0%', return1Y: '+14.7%', returnPositive: true, esg: 'N/A' },
+const RESULTS: ScreenerResult[] = [
+  { name: 'Apple', ticker: 'AAPL', type: 'Stock', sector: 'Technology', marketCap: '$2.9T', divYield: '0.5%', return1Y: '+18.2%', returnPositive: true, esg: 'A' },
+  { name: 'Vanguard Total Market', ticker: 'VTI', type: 'ETF', sector: '', marketCap: '—', divYield: '1.4%', return1Y: '+11.4%', returnPositive: true, esg: 'B' },
+  { name: 'Microsoft', ticker: 'MSFT', type: 'Stock', sector: 'Technology', marketCap: '$3.1T', divYield: '0.8%', return1Y: '+16.7%', returnPositive: true, esg: 'A' },
+  { name: 'Nvidia', ticker: 'NVDA', type: 'Stock', sector: 'Technology', marketCap: '$2.2T', divYield: '0.0%', return1Y: '+87.3%', returnPositive: true, esg: 'B' },
+  { name: 'iShares MSCI ESG', ticker: 'ESGU', type: 'ETF', sector: '', marketCap: '—', divYield: '1.2%', return1Y: '+9.8%', returnPositive: true, esg: 'A' },
+  { name: 'Johnson & Johnson', ticker: 'JNJ', type: 'Stock', sector: 'Healthcare', marketCap: '$389B', divYield: '3.1%', return1Y: '+4.2%', returnPositive: true, esg: 'A' },
+  { name: 'JPMorgan Chase', ticker: 'JPM', type: 'Stock', sector: 'Finance', marketCap: '$564B', divYield: '2.3%', return1Y: '+22.1%', returnPositive: true, esg: 'B' },
+  { name: 'SPDR Gold ETF', ticker: 'GLD', type: 'ETF', sector: '', marketCap: '—', divYield: '0.0%', return1Y: '+14.7%', returnPositive: true, esg: 'C' },
 ];
 
-const assetClasses = ['Stocks', 'ETFs', 'Mutual Funds', 'Crypto'];
+const assetClasses = ['Stock', 'ETF', 'Mutual Fund', 'Crypto'];
 const sectors = ['Technology', 'Healthcare', 'Finance', 'Energy', 'Consumer'];
 const esgRatings = ['A', 'B', 'C', 'D'];
 
@@ -38,6 +39,13 @@ export default function ScreenerPage() {
   function toggle(list: string[], setList: (v: string[]) => void, val: string) {
     setList(list.includes(val) ? list.filter((x) => x !== val) : [...list, val]);
   }
+
+  const filteredResults = RESULTS.filter((row) => {
+    if (checkedAssets.length > 0 && !checkedAssets.includes(row.type)) return false;
+    if (checkedSectors.length > 0 && row.sector && !checkedSectors.includes(row.sector)) return false;
+    if (checkedEsg.length > 0 && !checkedEsg.includes(row.esg)) return false;
+    return true;
+  });
 
   return (
     <div className="flex gap-6 max-w-6xl">
@@ -163,7 +171,7 @@ export default function ScreenerPage() {
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-bold text-[#030F12]">Results</h2>
           <span className="text-sm" style={{ color: '#606060' }}>
-            {results.length} results found
+            {filteredResults.length} results found
           </span>
         </div>
 
@@ -185,7 +193,7 @@ export default function ScreenerPage() {
               </tr>
             </thead>
             <tbody>
-              {results.map((row) => (
+              {filteredResults.map((row) => (
                 <tr
                   key={row.ticker}
                   onMouseEnter={() => setHoveredRow(row.ticker)}
@@ -238,7 +246,6 @@ export default function ScreenerPage() {
                       style={{
                         border: '1.5px solid #E0CD72',
                         color: '#E0CD72',
-                        opacity: hoveredRow === row.ticker ? 1 : 0,
                       }}
                     >
                       + Watchlist

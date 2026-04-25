@@ -25,6 +25,11 @@ const accounts = [
 const BAR_MAX = 5.5;
 
 export default function InvestmentsPage() {
+  const totalValue = holdings.reduce((sum, h) => {
+    return sum + parseFloat(h.value.replace(/[$,]/g, ''));
+  }, 0);
+  const totalValueStr = '$' + totalValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
   return (
     <div className="space-y-6 max-w-5xl">
       {/* Header stats */}
@@ -55,7 +60,7 @@ export default function InvestmentsPage() {
             >
               <span
                 className="text-base leading-none"
-                aria-label={acc.ok ? 'check' : 'warning'}
+                aria-hidden="true"
               >
                 {acc.ok ? '✓' : '⚠'}
               </span>
@@ -107,7 +112,7 @@ export default function InvestmentsPage() {
               <td className="py-3 font-bold text-[#030F12]" colSpan={3}>
                 All Holdings
               </td>
-              <td className="py-3 font-bold text-[#030F12]">$49,148.85</td>
+              <td className="py-3 font-bold text-[#030F12]">{totalValueStr}</td>
               <td className="py-3 font-bold text-[#030F12]">20.31%</td>
               <td className="py-3 font-semibold" style={{ color: '#16B548' }}>+0.8% avg</td>
             </tr>
@@ -118,9 +123,9 @@ export default function InvestmentsPage() {
       {/* Top positions bar chart */}
       <div className="card-magnifi">
         <h2 className="text-base font-semibold mb-4 text-[#030F12]">Top Positions by Weight</h2>
-        <svg width="100%" viewBox="0 0 480 160" preserveAspectRatio="xMinYMid meet">
+        <svg width="100%" viewBox="0 0 480 160" preserveAspectRatio="xMinYMid meet" role="img" aria-label="Top 5 positions by portfolio weight">
           {topPositions.map((pos, i) => {
-            const barW = (pos.weight / BAR_MAX) * 360;
+            const barW = Math.min((pos.weight / BAR_MAX) * 360, 360);
             const y = i * 28 + 10;
             return (
               <g key={pos.name}>

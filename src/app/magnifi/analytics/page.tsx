@@ -59,7 +59,7 @@ export default function AnalyticsPage() {
   const polyPts = pts.map((p) => `${p.x},${p.y}`).join(' ');
 
   // Area path
-  const baseY = DPAD.t + DH - DPAD.t - DPAD.b;
+  const baseY = DH - DPAD.b;
   const areaPath = `M${pts[0].x},${baseY} ` +
     pts.map((p) => `L${p.x},${p.y}`).join(' ') +
     ` L${pts[pts.length - 1].x},${baseY} Z`;

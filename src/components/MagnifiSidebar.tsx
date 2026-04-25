@@ -48,7 +48,7 @@ function NavSection({ label, items, pathname }: {
       {items.map((item) => {
         const isActive = item.href === '/magnifi'
           ? pathname === '/magnifi'
-          : pathname.startsWith(item.href);
+          : pathname === item.href || pathname.startsWith(item.href + '/');
         return (
           <Link
             key={item.href}

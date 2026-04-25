@@ -7,7 +7,7 @@
   --card: #FFFFFF;
   --card-foreground: #22201D;
   --secondary: #777573;
-  
+
   /* Brand Colors */
   --primary: #FF692D;
   --primary-hover: rgba(255, 105, 45, 0.5);
@@ -32,6 +32,14 @@
   --gray12: hsl(0, 0%, 9%);
   --fade-transition-time: 700ms;
   --slide-transition-time: 400ms;
+
+  /* Magnifi Design System */
+  --magnifi-gold: #E0CD72;
+  --magnifi-gold-2: #E7C751;
+  --magnifi-dark: #030F12;
+  --magnifi-success: #16B548;
+  --magnifi-error: #F5441D;
+  --magnifi-muted: #606060;
 }
 
 @theme inline {
@@ -51,6 +59,13 @@
 
   /* Radius mapping */
   --radius-md: var(--radius);
+
+  /* Magnifi color mapping */
+  --color-magnifi-gold: var(--magnifi-gold);
+  --color-magnifi-dark: var(--magnifi-dark);
+  --color-magnifi-success: var(--magnifi-success);
+  --color-magnifi-error: var(--magnifi-error);
+  --color-magnifi-muted: var(--magnifi-muted);
 }
 
 * {
@@ -98,23 +113,6 @@ body {
 }
 
 /* ─── Magnifi Design System ─────────────────────────────────── */
-:root {
-  --magnifi-gold: #E0CD72;
-  --magnifi-gold-2: #E7C751;
-  --magnifi-dark: #030F12;
-  --magnifi-success: #16B548;
-  --magnifi-error: #F5441D;
-  --magnifi-muted: #606060;
-}
-
-@theme inline {
-  --color-magnifi-gold: var(--magnifi-gold);
-  --color-magnifi-dark: var(--magnifi-dark);
-  --color-magnifi-success: var(--magnifi-success);
-  --color-magnifi-error: var(--magnifi-error);
-  --color-magnifi-muted: var(--magnifi-muted);
-}
-
 .card-magnifi {
   background: #ffffff;
   border-radius: 12px;
