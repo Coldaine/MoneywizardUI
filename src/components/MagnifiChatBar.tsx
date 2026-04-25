@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, type KeyboardEvent } from 'react';
 
 export function MagnifiChatBar() {
   const [inputValue, setInputValue] = useState('');
@@ -10,7 +10,7 @@ export function MagnifiChatBar() {
     setInputValue('');
   }
 
-  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+  function handleKeyDown(e: KeyboardEvent<HTMLInputElement>) {
     if (e.key === 'Enter') {
       handleSend();
     }
@@ -43,6 +43,7 @@ export function MagnifiChatBar() {
         </span>
         <input
           type="text"
+          aria-label="How can I help?"
           placeholder="How can I help?"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
@@ -67,6 +68,7 @@ export function MagnifiChatBar() {
       {/* Bar chart icon button */}
       <button
         type="button"
+        aria-label="Open charts"
         title="Charts"
         onClick={() => {}}
         style={{
@@ -82,7 +84,7 @@ export function MagnifiChatBar() {
           flexShrink: 0,
         }}
       >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <rect x="3" y="12" width="4" height="9" />
           <rect x="10" y="7" width="4" height="14" />
           <rect x="17" y="3" width="4" height="18" />
@@ -92,6 +94,7 @@ export function MagnifiChatBar() {
       {/* Sparkle icon button */}
       <button
         type="button"
+        aria-label="Open AI suggestions"
         title="AI Suggestions"
         onClick={() => {}}
         style={{
@@ -107,7 +110,7 @@ export function MagnifiChatBar() {
           flexShrink: 0,
         }}
       >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
         </svg>
       </button>
@@ -115,6 +118,7 @@ export function MagnifiChatBar() {
       {/* Send button */}
       <button
         type="button"
+        aria-label="Send message"
         onClick={handleSend}
         title="Send"
         style={{

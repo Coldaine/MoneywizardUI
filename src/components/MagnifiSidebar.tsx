@@ -24,7 +24,6 @@ export function MagnifiSidebar() {
 
   return (
     <div
-      className="sidebar-magnifi"
       style={{
         width: '240px',
         minWidth: '240px',
@@ -50,7 +49,7 @@ export function MagnifiSidebar() {
           const isActive =
             item.href === '/magnifi'
               ? pathname === '/magnifi'
-              : pathname.startsWith(item.href);
+              : pathname === item.href || pathname.startsWith(`${item.href}/`);
           return (
             <Link
               key={item.href}
@@ -69,7 +68,7 @@ export function MagnifiSidebar() {
                 position: 'relative',
               }}
             >
-              <span style={{ fontSize: '16px', lineHeight: 1 }}>{item.icon}</span>
+              <span aria-hidden="true" style={{ fontSize: '16px', lineHeight: 1 }}>{item.icon}</span>
               <span style={{ flex: 1 }}>{item.label}</span>
               {item.badge && (
                 <span style={{

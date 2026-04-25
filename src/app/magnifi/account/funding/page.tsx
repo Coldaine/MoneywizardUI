@@ -17,13 +17,6 @@ const DEST_ACCOUNTS = [
 
 const QUICK_AMOUNTS = ['$500', '$1,000', '$2,500', '$5,000'];
 
-function fmt(value: string) {
-  // Strip non-numeric, format
-  const n = parseFloat(value.replace(/[^0-9.]/g, ''));
-  if (isNaN(n)) return value;
-  return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
-
 export default function FundingPage() {
   const [step, setStep] = useState<Step>('select-bank');
   const [selectedBank, setSelectedBank] = useState<string | null>(null);

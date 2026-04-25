@@ -27,11 +27,16 @@ export default function ResearchPage() {
       <h1 style={{ color: '#111827', fontSize: '22px', fontWeight: 700, margin: '0 0 20px' }}>Research</h1>
 
       {/* Tabs */}
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
+      <div role="tablist" aria-label="Research views" style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
         {(['all', 'moby'] as ResearchTab[]).map((tab) => (
           <button
+            type="button"
             key={tab}
+            id={`${tab}-tab`}
+            role="tab"
             onClick={() => setActiveTab(tab)}
+            aria-selected={activeTab === tab}
+            aria-controls="research-panel"
             style={{
               backgroundColor: activeTab === tab ? '#E0CD72' : '#F3F4F6',
               color: activeTab === tab ? '#374151' : '#6B7280',
@@ -45,116 +50,121 @@ export default function ResearchPage() {
         ))}
       </div>
 
-      {/* Connect banner */}
-      <div style={{
-        backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '8px',
-        padding: '20px', marginBottom: '24px',
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        gap: '16px', flexWrap: 'wrap', boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-      }}>
-        <div style={{ flex: 1 }}>
-          <div style={{ fontWeight: 700, fontSize: '16px', color: '#111827', marginBottom: '4px' }}>
-            🐘 Connect Your Research to Your Investments
-          </div>
-          <div style={{ color: '#6B7280', fontSize: '13px' }}>
-            Link Moby AI research to automatically surface insights relevant to your holdings
-          </div>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
-          <button
-            onClick={() => {}}
-            style={{
-              backgroundColor: '#E0CD72', color: '#374151', border: 'none',
-              borderRadius: '6px', padding: '8px 20px', fontWeight: 600, fontSize: '13px', cursor: 'pointer',
-            }}
-          >
-            Connect
-          </button>
-          <button
-            onClick={() => {}}
-            style={{ background: 'none', border: 'none', color: '#6B7280', fontSize: '13px', cursor: 'pointer' }}
-          >
-            Learn More
-          </button>
-        </div>
-      </div>
-
-      {/* Latest Research Reports */}
-      <div style={{ marginBottom: '28px' }}>
-        <div style={{
-          fontSize: '11px', fontWeight: 600, color: '#9CA3AF',
-          letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '12px',
-        }}>
-          Latest Research Reports
-        </div>
+      <div id="research-panel" role="tabpanel" aria-labelledby={`${activeTab}-tab`}>
+        {/* Connect banner */}
         <div style={{
           backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '8px',
-          overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+          padding: '20px', marginBottom: '24px',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          gap: '16px', flexWrap: 'wrap', boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
         }}>
-          {reports.map((report, i) => (
-            <div
-              key={report.ticker}
+          <div style={{ flex: 1 }}>
+            <div style={{ fontWeight: 700, fontSize: '16px', color: '#111827', marginBottom: '4px' }}>
+              🐘 Connect Your Research to Your Investments
+            </div>
+            <div style={{ color: '#6B7280', fontSize: '13px' }}>
+              Link Moby AI research to automatically surface insights relevant to your holdings
+            </div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
+            <button
+              type="button"
               onClick={() => {}}
               style={{
-                padding: '14px 16px',
-                borderBottom: i < reports.length - 1 ? '1px solid #E5E7EB' : 'none',
-                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                cursor: 'pointer',
+                backgroundColor: '#E0CD72', color: '#374151', border: 'none',
+                borderRadius: '6px', padding: '8px 20px', fontWeight: 600, fontSize: '13px', cursor: 'pointer',
               }}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.backgroundColor = '#FAFAFA'; }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.backgroundColor = 'transparent'; }}
             >
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div>
-                  <span style={{ fontWeight: 700, fontSize: '14px', color: '#111827' }}>{report.ticker}</span>
-                  <span style={{ color: '#6B7280', fontSize: '13px', marginLeft: '8px' }}>{report.name}</span>
-                </div>
-                <div style={{ color: '#374151', fontSize: '13px', marginTop: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {report.desc}
-                </div>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginLeft: '16px', flexShrink: 0 }}>
-                <span style={{
-                  backgroundColor: '#1A1A2E', color: '#E0CD72',
-                  borderRadius: '9999px', padding: '2px 8px', fontSize: '11px', fontWeight: 500,
-                }}>
-                  moby
-                </span>
-                <span style={{ color: '#9CA3AF', fontSize: '12px', minWidth: '40px', textAlign: 'right' }}>{report.date}</span>
-                <span style={{ color: '#9CA3AF', fontSize: '14px' }}>→</span>
-              </div>
-            </div>
-          ))}
+              Connect
+            </button>
+            <button
+              type="button"
+              onClick={() => {}}
+              style={{ background: 'none', border: 'none', color: '#6B7280', fontSize: '13px', cursor: 'pointer' }}
+            >
+              Learn More
+            </button>
+          </div>
         </div>
-      </div>
 
-      {/* For You — All tab only */}
-      {activeTab === 'all' && (
-        <div>
+        {/* Latest Research Reports */}
+        <div style={{ marginBottom: '28px' }}>
           <div style={{
             fontSize: '11px', fontWeight: 600, color: '#9CA3AF',
             letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '12px',
           }}>
-            For You
+            Latest Research Reports
           </div>
-          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-            {forYouItems.map((item) => (
-              <div
-                key={item.title}
+          <div style={{
+            backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '8px',
+            overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+          }}>
+            {reports.map((report, i) => (
+              <button
+                key={report.ticker}
+                type="button"
                 onClick={() => {}}
+                className="w-full text-left transition-colors hover:bg-[#FAFAFA]"
                 style={{
-                  flex: '1 1 180px', backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB',
-                  borderRadius: '8px', padding: '14px 16px', cursor: 'pointer',
-                  boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                  padding: '14px 16px',
+                  borderBottom: i < reports.length - 1 ? '1px solid #E5E7EB' : 'none',
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                  cursor: 'pointer', backgroundColor: 'transparent',
                 }}
               >
-                <div style={{ fontWeight: 700, fontSize: '14px', color: '#111827', marginBottom: '4px' }}>{item.title}</div>
-                <div style={{ color: '#6B7280', fontSize: '12px' }}>{item.source} · {item.date}</div>
-              </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div>
+                    <span style={{ fontWeight: 700, fontSize: '14px', color: '#111827' }}>{report.ticker}</span>
+                    <span style={{ color: '#6B7280', fontSize: '13px', marginLeft: '8px' }}>{report.name}</span>
+                  </div>
+                  <div style={{ color: '#374151', fontSize: '13px', marginTop: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {report.desc}
+                  </div>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginLeft: '16px', flexShrink: 0 }}>
+                  <span style={{
+                    backgroundColor: '#1A1A2E', color: '#E0CD72',
+                    borderRadius: '9999px', padding: '2px 8px', fontSize: '11px', fontWeight: 500,
+                  }}>
+                    moby
+                  </span>
+                  <span style={{ color: '#9CA3AF', fontSize: '12px', minWidth: '40px', textAlign: 'right' }}>{report.date}</span>
+                  <span style={{ color: '#9CA3AF', fontSize: '14px' }}>→</span>
+                </div>
+              </button>
             ))}
           </div>
         </div>
-      )}
+
+        {/* For You — All tab only */}
+        {activeTab === 'all' && (
+          <div>
+            <div style={{
+              fontSize: '11px', fontWeight: 600, color: '#9CA3AF',
+              letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '12px',
+            }}>
+              For You
+            </div>
+            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+              {forYouItems.map((item) => (
+                <button
+                  key={item.title}
+                  type="button"
+                  onClick={() => {}}
+                  style={{
+                    flex: '1 1 180px', backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB',
+                    borderRadius: '8px', padding: '14px 16px', cursor: 'pointer',
+                    boxShadow: '0 1px 3px rgba(0,0,0,0.1)', textAlign: 'left',
+                  }}
+                >
+                  <div style={{ fontWeight: 700, fontSize: '14px', color: '#111827', marginBottom: '4px' }}>{item.title}</div>
+                  <div style={{ color: '#6B7280', fontSize: '12px' }}>{item.source} · {item.date}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

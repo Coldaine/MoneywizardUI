@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 type TradeTab = 'tradelist' | 'pending' | 'history' | 'cash';
 
@@ -28,6 +28,32 @@ const historyRows = [
 export default function TradePage() {
   const [activeTab, setActiveTab] = useState<TradeTab>('tradelist');
   const [showTradeForm, setShowTradeForm] = useState(false);
+  const openTradeButtonRef = useRef<HTMLButtonElement>(null);
+  const closeTradeButtonRef = useRef<HTMLButtonElement>(null);
+
+  function closeTradeForm() {
+    setShowTradeForm(false);
+    openTradeButtonRef.current?.focus();
+  }
+
+  useEffect(() => {
+    if (showTradeForm) {
+      closeTradeButtonRef.current?.focus();
+    }
+  }, [showTradeForm]);
+
+  useEffect(() => {
+    if (!showTradeForm) return undefined;
+
+    function handleEscape(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        closeTradeForm();
+      }
+    }
+
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, [showTradeForm]);
 
   return (
     <div style={{ backgroundColor: '#F8FAFC', minHeight: '100%', padding: '24px' }}>
@@ -39,6 +65,11 @@ export default function TradePage() {
           <span style={{ color: '#6B7280', fontSize: '13px' }}>Closed · Opens in 47h 23m</span>
         </div>
         <button
+          ref={openTradeButtonRef}
+          type="button"
+          aria-haspopup="dialog"
+          aria-expanded={showTradeForm}
+          aria-controls="new-trade-dialog"
           onClick={() => setShowTradeForm(true)}
           style={{
             backgroundColor: '#E0CD72', color: '#374151', border: 'none',
@@ -57,16 +88,24 @@ export default function TradePage() {
             position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)',
             display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50,
           }}
-          onClick={() => setShowTradeForm(false)}
+          onClick={closeTradeForm}
         >
           <div
+            id="new-trade-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="new-trade-title"
+            aria-describedby="new-trade-description"
+            tabIndex={-1}
             style={{ backgroundColor: '#FFFFFF', borderRadius: '8px', padding: '24px', width: '360px', boxShadow: '0 4px 24px rgba(0,0,0,0.15)' }}
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 style={{ color: '#111827', fontSize: '18px', fontWeight: 700, marginTop: 0, marginBottom: '8px' }}>New Trade</h2>
-            <p style={{ color: '#6B7280', fontSize: '13px', marginBottom: '16px' }}>Connect a brokerage to place live trades.</p>
+            <h2 id="new-trade-title" style={{ color: '#111827', fontSize: '18px', fontWeight: 700, marginTop: 0, marginBottom: '8px' }}>New Trade</h2>
+            <p id="new-trade-description" style={{ color: '#6B7280', fontSize: '13px', marginBottom: '16px' }}>Connect a brokerage to place live trades.</p>
             <button
-              onClick={() => setShowTradeForm(false)}
+              ref={closeTradeButtonRef}
+              type="button"
+              onClick={closeTradeForm}
               style={{
                 backgroundColor: '#E0CD72', color: '#374151', border: 'none',
                 borderRadius: '6px', padding: '8px 20px', fontWeight: 600,
@@ -80,11 +119,16 @@ export default function TradePage() {
       )}
 
       {/* Tabs */}
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', flexWrap: 'wrap' }}>
+      <div role="tablist" aria-label="Trade sections" style={{ display: 'flex', gap: '8px', marginBottom: '20px', flexWrap: 'wrap' }}>
         {tabLabels.map(({ key, label }) => (
           <button
+            type="button"
             key={key}
+            id={`trade-tab-${key}`}
+            role="tab"
             onClick={() => setActiveTab(key)}
+            aria-selected={activeTab === key}
+            aria-controls={`trade-panel-${key}`}
             style={{
               backgroundColor: activeTab === key ? '#E0CD72' : '#F3F4F6',
               color: activeTab === key ? '#374151' : '#6B7280',
@@ -130,7 +174,7 @@ export default function TradePage() {
 
       {/* Tradelist tab */}
       {activeTab === 'tradelist' && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <div id="trade-panel-tradelist" role="tabpanel" aria-labelledby="trade-tab-tradelist" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           {tradeItems.map((item) => (
             <div
               key={item.ticker}
@@ -157,6 +201,7 @@ export default function TradePage() {
                   {item.shares} shares · {item.price}
                 </span>
                 <button
+                  type="button"
                   onClick={() => {}}
                   style={{
                     backgroundColor: '#E0CD72', color: '#374151', border: 'none',
@@ -173,12 +218,13 @@ export default function TradePage() {
 
       {/* Pending tab */}
       {activeTab === 'pending' && (
-        <div style={{
+        <div id="trade-panel-pending" role="tabpanel" aria-labelledby="trade-tab-pending" style={{
           backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '8px',
           padding: '48px 24px', textAlign: 'center', boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
         }}>
           <p style={{ color: '#6B7280', fontSize: '15px', marginBottom: '16px' }}>No pending orders</p>
           <button
+            type="button"
             onClick={() => setShowTradeForm(true)}
             style={{
               backgroundColor: '#E0CD72', color: '#374151', border: 'none',
@@ -192,7 +238,7 @@ export default function TradePage() {
 
       {/* Transaction History tab */}
       {activeTab === 'history' && (
-        <div style={{
+        <div id="trade-panel-history" role="tabpanel" aria-labelledby="trade-tab-history" style={{
           backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '8px',
           overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
         }}>
@@ -235,7 +281,7 @@ export default function TradePage() {
 
       {/* Cash & Transfers tab */}
       {activeTab === 'cash' && (
-        <div>
+        <div id="trade-panel-cash" role="tabpanel" aria-labelledby="trade-tab-cash">
           <div style={{ display: 'flex', gap: '16px', marginBottom: '16px', flexWrap: 'wrap' }}>
             {[
               { label: 'Available Cash', value: '$0.00', sub: 'Cash available for trading' },
@@ -256,6 +302,7 @@ export default function TradePage() {
           </div>
           <div style={{ marginBottom: '16px' }}>
             <button
+              type="button"
               onClick={() => {}}
               style={{
                 backgroundColor: 'transparent', color: '#374151',

@@ -7,7 +7,7 @@ export default function MagnifiLayout({ children }: { children: ReactNode }) {
     <div style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
       <MagnifiSidebar />
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-        <main className="content-magnifi" style={{ flex: 1, overflowY: 'auto', paddingBottom: '80px' }}>
+        <main style={{ flex: 1, overflowY: 'auto', paddingBottom: '80px' }}>
           {children}
         </main>
         <MagnifiChatBar />

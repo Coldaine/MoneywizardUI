@@ -61,14 +61,19 @@ export default function SearchPage() {
   return (
     <div style={{ backgroundColor: '#F8FAFC', minHeight: '100%', padding: '24px' }}>
       {/* Tab pills */}
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
+      <div role="tablist" aria-label="Search sections" style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
         {([
           { key: 'search' as SearchTab, label: 'Search' },
           { key: 'saved' as SearchTab, label: 'Saved Searches' },
         ]).map(({ key, label }) => (
           <button
+            type="button"
+            id={`${key}-tab`}
+            role="tab"
             key={key}
             onClick={() => setActiveTab(key)}
+            aria-selected={activeTab === key}
+            aria-controls={`${key}-panel`}
             style={{
               backgroundColor: activeTab === key ? '#E0CD72' : '#F3F4F6',
               color: activeTab === key ? '#374151' : '#6B7280',
@@ -83,7 +88,7 @@ export default function SearchPage() {
       </div>
 
       {activeTab === 'search' && (
-        <div>
+        <div id="search-panel" role="tabpanel" aria-labelledby="search-tab">
           <div style={{
             fontSize: '14px', fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase',
             textAlign: 'center', margin: '24px 0 16px', letterSpacing: '0.04em',
@@ -100,6 +105,7 @@ export default function SearchPage() {
             </span>
             <input
               type="text"
+              aria-label="Search stocks, ETFs, and funds"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search stocks, ETFs, funds..."
@@ -123,6 +129,7 @@ export default function SearchPage() {
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
               {trendingChips.map((chip) => (
                 <button
+                  type="button"
                   key={chip}
                   onClick={() => setQuery(chip.replace(' →', ''))}
                   style={{
@@ -146,6 +153,7 @@ export default function SearchPage() {
             <div style={{ display: 'flex', gap: '6px', marginBottom: '16px' }}>
               {ideasFilterLabels.map(({ key, label }) => (
                 <button
+                  type="button"
                   key={key}
                   onClick={() => setIdeasFilter(key)}
                   style={{
@@ -162,13 +170,15 @@ export default function SearchPage() {
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               {ideasData[ideasFilter].map((item) => (
-                <div
+                <button
+                  type="button"
                   key={item.ticker}
                   onClick={() => setQuery(item.ticker)}
                   style={{
                     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                    padding: '10px 12px', borderRadius: '6px',
+                    width: '100%', padding: '10px 12px', borderRadius: '6px',
                     border: '1px solid #E5E7EB', cursor: 'pointer', backgroundColor: '#FAFAFA',
+                    textAlign: 'left',
                   }}
                 >
                   <div>
@@ -181,7 +191,7 @@ export default function SearchPage() {
                       {item.change}
                     </span>
                   </div>
-                </div>
+                </button>
               ))}
             </div>
           </div>
@@ -199,6 +209,7 @@ export default function SearchPage() {
             }}>
               {motivations.map((item, i) => (
                 <button
+                  type="button"
                   key={item.label}
                   onClick={() => setQuery(item.label)}
                   style={{
@@ -233,6 +244,7 @@ export default function SearchPage() {
             }}>
               {majorEvents.map((item, i) => (
                 <button
+                  type="button"
                   key={item.label}
                   onClick={() => setQuery(item.label)}
                   style={{
@@ -257,7 +269,7 @@ export default function SearchPage() {
       )}
 
       {activeTab === 'saved' && (
-        <div style={{
+        <div id="saved-panel" role="tabpanel" aria-labelledby="saved-tab" style={{
           display: 'flex', flexDirection: 'column', alignItems: 'center',
           justifyContent: 'center', padding: '64px 24px', textAlign: 'center',
         }}>
