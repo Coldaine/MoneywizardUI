@@ -4,34 +4,47 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const mainNav = [
-  { label: 'Dashboard', icon: '◈', href: '/magnifi' },
-  { label: 'Investments', icon: '📊', href: '/magnifi/investments' },
-  { label: 'Portfolio', icon: '🗂', href: '/magnifi/portfolio' },
-  { label: 'Search', icon: '🔍', href: '/magnifi/search' },
-  { label: 'Transactions', icon: '↕', href: '/magnifi/transactions' },
-  { label: 'News', icon: '📰', href: '/magnifi/news' },
-  { label: 'Screener', icon: '⚗', href: '/magnifi/screener' },
-  { label: 'Compare', icon: '⊞', href: '/magnifi/compare' },
-  { label: 'AI Chat', icon: '💬', href: '/magnifi/chat' },
+  { label: 'Dashboard',    icon: '◈',  href: '/magnifi' },
+  { label: 'Investments',  icon: '📊', href: '/magnifi/investments' },
+  { label: 'Portfolio',    icon: '🗂', href: '/magnifi/portfolio' },
+  { label: 'Holdings',     icon: '📦', href: '/magnifi/portfolio/holdings' },
+  { label: 'Search',       icon: '🔍', href: '/magnifi/search' },
+  { label: 'News',         icon: '📰', href: '/magnifi/news' },
+  { label: 'Screener',     icon: '⚗',  href: '/magnifi/screener' },
+  { label: 'Compare',      icon: '⊞',  href: '/magnifi/compare' },
+  { label: 'AI Chat',      icon: '💬', href: '/magnifi/chat' },
+];
+
+const activityNav = [
+  { label: 'Transactions', icon: '↕',  href: '/magnifi/transactions' },
+  { label: 'Orders',       icon: '📋', href: '/magnifi/orders' },
+  { label: 'History',      icon: '🕑', href: '/magnifi/history' },
 ];
 
 const analyticsNav = [
-  { label: 'Analytics', icon: '📈', href: '/magnifi/analytics' },
-  { label: 'Performance', icon: '📉', href: '/magnifi/performance' },
-  { label: 'Reports', icon: '📋', href: '/magnifi/reports' },
-  { label: 'Tax', icon: '🧾', href: '/magnifi/tax' },
+  { label: 'Analytics',    icon: '📈', href: '/magnifi/analytics' },
+  { label: 'Performance',  icon: '📉', href: '/magnifi/performance' },
+  { label: 'Reports',      icon: '📑', href: '/magnifi/reports' },
+  { label: 'Tax',          icon: '🧾', href: '/magnifi/tax' },
 ];
 
 const planningNav = [
-  { label: 'Goals', icon: '🎯', href: '/magnifi/goals' },
+  { label: 'Goals',   icon: '🎯', href: '/magnifi/goals' },
   { label: 'Planner', icon: '📅', href: '/magnifi/planner' },
 ];
 
+const resourcesNav = [
+  { label: 'Learn',         icon: '🎓', href: '/magnifi/learn' },
+  { label: 'Notifications', icon: '🔔', href: '/magnifi/notifications' },
+];
+
 const accountNav = [
-  { label: 'Settings', icon: '⚙️', href: '/magnifi/settings' },
-  { label: 'Account', icon: '🏦', href: '/magnifi/account' },
-  { label: 'Profile', icon: '👤', href: '/magnifi/profile' },
-  { label: 'Billing', icon: '💳', href: '/magnifi/billing' },
+  { label: 'Settings',  icon: '⚙️', href: '/magnifi/settings' },
+  { label: 'Account',   icon: '🏦', href: '/magnifi/account' },
+  { label: 'Funding',   icon: '⬇',  href: '/magnifi/account/funding' },
+  { label: 'Transfer',  icon: '⇅',  href: '/magnifi/account/transfer' },
+  { label: 'Profile',   icon: '👤', href: '/magnifi/profile' },
+  { label: 'Billing',   icon: '💳', href: '/magnifi/billing' },
   { label: 'Documents', icon: '📄', href: '/magnifi/documents' },
 ];
 
@@ -89,10 +102,12 @@ export function MagnifiSidebar() {
 
       {/* Nav groups */}
       <nav className="flex-1 overflow-y-auto">
-        <NavSection label="Invest" items={mainNav} pathname={pathname} />
-        <NavSection label="Analyze" items={analyticsNav} pathname={pathname} />
-        <NavSection label="Plan" items={planningNav} pathname={pathname} />
-        <NavSection label="Account" items={accountNav} pathname={pathname} />
+        <NavSection label="Invest"    items={mainNav}      pathname={pathname} />
+        <NavSection label="Activity"  items={activityNav}  pathname={pathname} />
+        <NavSection label="Analyze"   items={analyticsNav} pathname={pathname} />
+        <NavSection label="Plan"      items={planningNav}  pathname={pathname} />
+        <NavSection label="Resources" items={resourcesNav} pathname={pathname} />
+        <NavSection label="Account"   items={accountNav}   pathname={pathname} />
       </nav>
 
       {/* Back to Monarch */}
