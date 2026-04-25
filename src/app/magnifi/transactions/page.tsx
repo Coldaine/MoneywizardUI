@@ -40,38 +40,6 @@ interface Filters {
 export default function TransactionsPage() {
   const [filters, setFilters] = useState<Filters>({ date: '', account: '', type: '', security: '' });
 
-  function parseTransactionDate(label: string) {
-    const [month, day] = label.split(' ');
-    const monthIndex: Record<string, number> = {
-      Jan: 0,
-      Feb: 1,
-      Mar: 2,
-      Apr: 3,
-      May: 4,
-      Jun: 5,
-      Jul: 6,
-      Aug: 7,
-      Sep: 8,
-      Oct: 9,
-      Nov: 10,
-      Dec: 11,
-    };
-    return new Date(new Date().getFullYear(), monthIndex[month], parseInt(day.replace(',', ''), 10));
-  }
-
-  function dateMatchesFilter(dateLabel: string, selected: Filters['date']) {
-    const txDate = parseTransactionDate(dateLabel);
-    const today = new Date();
-    const msPerDay = 24 * 60 * 60 * 1000;
-
-    if (selected === 'Year to date') {
-      return txDate >= new Date(today.getFullYear(), 0, 1);
-    }
-
-    const days = selected === 'Last 30 days' ? 30 : selected === 'Last 60 days' ? 60 : 90;
-    return today.getTime() - txDate.getTime() <= days * msPerDay;
-  }
-
   const filtered = allTransactions.filter((t) => {
     const matchDate     = !filters.date     || t.date.toLowerCase().includes(filters.date.toLowerCase());
     const matchAccount  = !filters.account  || t.account === filters.account;
