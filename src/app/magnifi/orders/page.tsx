@@ -57,7 +57,8 @@ export default function OrdersPage() {
 
   const openCount    = ORDERS.filter((o) => o.status === 'Open').length;
   const pendingCount = ORDERS.filter((o) => o.status === 'Pending').length;
-  const filledToday  = ORDERS.filter((o) => o.status === 'Filled' && o.date.startsWith('Apr 25')).length;
+  const todayLabel = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  const filledToday = ORDERS.filter((o) => o.status === 'Filled' && o.date.startsWith(todayLabel)).length;
 
   return (
     <div className="space-y-6 max-w-5xl">
@@ -86,13 +87,14 @@ export default function OrdersPage() {
       {/* Filters */}
       <div className="card-magnifi flex flex-wrap gap-3 items-center">
         {/* Status pills */}
-        <div className="flex gap-2 flex-wrap">
+        <div className="flex gap-2 flex-wrap" role="group" aria-label="Filter by status">
           {STATUSES.map((s) => {
             const style = s === 'All' ? undefined : STATUS_STYLE[s];
             return (
               <button
                 key={s}
                 onClick={() => setStatusFilter(s)}
+                aria-pressed={statusFilter === s}
                 className="rounded-full px-3 py-1 text-xs font-semibold border transition-colors"
                 style={
                   statusFilter === s
@@ -109,6 +111,7 @@ export default function OrdersPage() {
           <select
             value={accountFilter}
             onChange={(e) => setAccountFilter(e.target.value)}
+            aria-label="Filter by account"
             className="rounded-full border px-3 py-1.5 text-sm outline-none"
             style={{ borderColor: '#E0E0E0', color: '#030F12' }}
           >
@@ -150,7 +153,7 @@ export default function OrdersPage() {
                   <td className="py-3 pr-3 font-semibold text-[#030F12]">{o.security}</td>
                   <td className="py-3 pr-3 text-[#030F12]">{o.qty}</td>
                   <td className="py-3 pr-3" style={{ color: '#606060' }}>{o.limitPrice ?? '—'}</td>
-                  <td className="py-3 pr-3" style={{ color: '#16B548' }}>{o.filledPrice ?? '—'}</td>
+                  <td className="py-3 pr-3" style={{ color: o.filledPrice ? '#16B548' : '#606060' }}>{o.filledPrice ?? '—'}</td>
                   <td className="py-3 pr-3">
                     <span
                       className="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold"

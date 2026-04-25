@@ -66,10 +66,13 @@ export default function PerformancePage() {
   const [range, setRange] = useState<Range>('1Y');
 
   const { portfolio, sp500, months } = DATASETS[range];
-  const allData = [...portfolio, ...sp500];
-  const portfolioPoints = toPoints(portfolio, allData);
-  const sp500Points     = toPoints(sp500, allData);
-  const areaPath        = toAreaPath(portfolio, allData);
+  const pctChange = (series: number[]) => series.map((value) => ((value - series[0]) / series[0]) * 100);
+  const portfolioPct = pctChange(portfolio);
+  const sp500Pct = pctChange(sp500);
+  const combined = [...portfolioPct, ...sp500Pct];
+  const portfolioPoints = toPoints(portfolioPct, combined);
+  const sp500Points     = toPoints(sp500Pct, combined);
+  const areaPath        = toAreaPath(portfolioPct, combined);
 
   return (
     <div className="space-y-6 max-w-5xl">

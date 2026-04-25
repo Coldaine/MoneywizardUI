@@ -247,7 +247,7 @@ export default function TransferPage() {
             {transferType === 'cash' ? amtDisplay : `${amount} shares`} from {fromAcct?.name} will arrive in {toAcct?.name} within 1–3 business days.
           </p>
           <button
-            onClick={() => { setStep('select-accounts'); setFromId(null); setToId(null); setAmount(''); }}
+            onClick={() => { setStep('select-accounts'); setFromId(null); setToId(null); setAmount(''); setTransferType('cash'); }}
             className="rounded-full bg-[#E0CD72] text-[#030F12] font-semibold px-8 py-2.5 hover:bg-[#E7C751] transition-colors"
           >
             New Transfer

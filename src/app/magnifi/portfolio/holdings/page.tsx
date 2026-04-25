@@ -43,6 +43,31 @@ function fmtPct(n: number) {
   return (n >= 0 ? '+' : '') + n.toFixed(2) + '%';
 }
 
+function SortBtn({
+  k,
+  label,
+  sortKey,
+  sortDir,
+  onSort,
+}: {
+  k: SortKey;
+  label: string;
+  sortKey: SortKey;
+  sortDir: 'asc' | 'desc';
+  onSort: (key: SortKey) => void;
+}) {
+  return (
+    <button
+      onClick={() => onSort(k)}
+      className="text-left font-semibold flex items-center gap-1 hover:text-[#030F12] transition-colors"
+      style={{ color: sortKey === k ? '#030F12' : '#606060' }}
+    >
+      {label}
+      <span className="text-[10px]">{sortKey === k ? (sortDir === 'desc' ? '▼' : '▲') : '⇅'}</span>
+    </button>
+  );
+}
+
 export default function HoldingsPage() {
   const [assetClass, setAssetClass] = useState<AssetClass>('All');
   const [account, setAccount] = useState('All Accounts');
@@ -68,17 +93,6 @@ export default function HoldingsPage() {
   const totalValue   = filtered.reduce((s, h) => s + h.value, 0);
   const totalGain    = filtered.reduce((s, h) => s + h.totalReturn, 0);
   const totalDayChg  = filtered.reduce((s, h) => s + h.dayChange, 0);
-
-  const SortBtn = ({ k, label }: { k: SortKey; label: string }) => (
-    <button
-      onClick={() => setSort(k)}
-      className="text-left font-semibold flex items-center gap-1 hover:text-[#030F12] transition-colors"
-      style={{ color: sortKey === k ? '#030F12' : '#606060' }}
-    >
-      {label}
-      <span className="text-[10px]">{sortKey === k ? (sortDir === 'desc' ? '▼' : '▲') : '⇅'}</span>
-    </button>
-  );
 
   return (
     <div className="space-y-6 max-w-5xl">
@@ -149,9 +163,9 @@ export default function HoldingsPage() {
               <th className="pb-2 text-right font-semibold pr-4" style={{ color: '#606060' }}>Qty</th>
               <th className="pb-2 text-right font-semibold pr-4" style={{ color: '#606060' }}>Avg Cost</th>
               <th className="pb-2 text-right font-semibold pr-4" style={{ color: '#606060' }}>Current</th>
-              <th className="pb-2 text-right font-semibold pr-4"><SortBtn k="value" label="Value" /></th>
-              <th className="pb-2 text-right font-semibold pr-4"><SortBtn k="gain" label="Return $" /></th>
-              <th className="pb-2 text-right font-semibold pr-4"><SortBtn k="pct" label="Return %" /></th>
+              <th className="pb-2 text-right font-semibold pr-4"><SortBtn k="value" label="Value" sortKey={sortKey} sortDir={sortDir} onSort={setSort} /></th>
+              <th className="pb-2 text-right font-semibold pr-4"><SortBtn k="gain" label="Return $" sortKey={sortKey} sortDir={sortDir} onSort={setSort} /></th>
+              <th className="pb-2 text-right font-semibold pr-4"><SortBtn k="pct" label="Return %" sortKey={sortKey} sortDir={sortDir} onSort={setSort} /></th>
               <th className="pb-2 text-right font-semibold" style={{ color: '#606060' }}>Day Chg</th>
             </tr>
           </thead>

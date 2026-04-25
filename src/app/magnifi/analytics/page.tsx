@@ -11,9 +11,13 @@ const DRAWDOWN_PTS = [
   100, 103, 107, 110, 108, 106, 101, 97, 94, 98, 103, 107,
   111, 114, 112, 109, 106, 110, 115, 119, 122, 118, 121, 124,
 ];
-// The drawdown trough spans indices 6–8 (values 101→94→98)
+// The drawdown trough spans indices 6–8 (values 101→97→94)
 const DD_START = 6;
 const DD_END   = 8;
+
+const drawdownPeak = Math.max(...DRAWDOWN_PTS.slice(0, DD_START + 1));
+const drawdownTrough = Math.min(...DRAWDOWN_PTS.slice(DD_START, DD_END + 1));
+const DRAWDOWN_PCT = ((drawdownTrough - drawdownPeak) / drawdownPeak) * 100;
 
 // Rolling returns
 const ROLLING = [
@@ -100,7 +104,7 @@ export default function AnalyticsPage() {
             className="text-sm font-bold px-3 py-1 rounded-full"
             style={{ background: 'rgba(245,68,29,0.1)', color: '#F5441D' }}
           >
-            -11.2% peak-to-trough
+            {DRAWDOWN_PCT.toFixed(1)}% peak-to-trough
           </span>
         </div>
         <svg width="100%" viewBox={`0 0 ${DW} ${DH}`} preserveAspectRatio="xMinYMid meet">
@@ -127,7 +131,7 @@ export default function AnalyticsPage() {
             fill="#F5441D"
             fontWeight="700"
           >
-            -11.2%
+            {DRAWDOWN_PCT.toFixed(1)}%
           </text>
         </svg>
       </div>

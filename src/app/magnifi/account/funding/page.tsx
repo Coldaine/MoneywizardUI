@@ -39,10 +39,10 @@ export default function FundingPage() {
   }
 
   function handleQuickAmount(qa: string) {
-    setAmount(qa.replace('$', '').replace(',', ''));
+    setAmount(qa.replace(/[$,]/g, ''));
   }
 
-  const amtDisplay = amount ? '$' + parseFloat(amount || '0').toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '';
+  const amtDisplay = amount ? fmt(amount) : '';
 
   return (
     <div className="space-y-6 max-w-lg">

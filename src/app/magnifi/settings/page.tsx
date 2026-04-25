@@ -119,7 +119,7 @@ export default function SettingsPage() {
           <div className="flex items-center justify-between">
             <label className="text-sm font-medium text-[#030F12]">Date Format</label>
             <select
-              className="text-sm border rounded-lg px-3 py-1.5 focus:outline-none"
+              className="text-sm border rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#E0CD72]"
               style={{ borderColor: '#E5E7EB', color: '#030F12' }}
               value={dateFormat}
               onChange={(e) => setDateFormat(e.target.value)}
@@ -138,6 +138,7 @@ export default function SettingsPage() {
                 <button
                   key={t}
                   onClick={() => setTheme(t)}
+                  aria-pressed={theme === t}
                   className="px-4 py-1.5 rounded-full text-sm font-medium transition-colors"
                   style={{
                     background: theme === t ? '#E0CD72' : '#F3F4F6',
@@ -159,6 +160,7 @@ export default function SettingsPage() {
                 <button
                   key={r}
                   onClick={() => setTimeRange(r)}
+                  aria-pressed={timeRange === r}
                   className="px-3 py-1.5 rounded-full text-sm font-medium transition-colors"
                   style={{
                     background: timeRange === r ? '#E0CD72' : '#F3F4F6',

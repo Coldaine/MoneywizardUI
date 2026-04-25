@@ -12,7 +12,7 @@ const allTransactions = [
   { date: 'Apr 10', account: 'Fidelity',  type: 'Buy',      security: 'AAPL', qty: '10.0', price: '$184.20', total: '$1,842.00' },
   { date: 'Apr 5',  account: 'Robinhood', type: 'Sell',     security: 'TSLA', qty: '8.0',  price: '$175.50', total: '$1,404.00' },
   { date: 'Apr 2',  account: 'Fidelity',  type: 'Buy',      security: 'BND',  qty: '15.0', price: '$73.42',  total: '$1,101.30' },
-  { date: 'Mar 28', account: 'Coinbase',  type: 'Buy',      security: 'GBTC', qty: '10.0', price: '$49.80',  total: '$498.00'   },
+  { date: 'Feb 28', account: 'Coinbase',  type: 'Buy',      security: 'GBTC', qty: '10.0', price: '$49.80',  total: '$498.00'   },
 ];
 
 const BADGE: Record<string, { bg: string; color: string }> = {
@@ -39,9 +39,42 @@ export default function TransactionsPage() {
   const [pendingFilters, setPendingFilters] = useState<Filters>(DEFAULT_FILTERS);
   const [visibleCount, setVisibleCount] = useState(10);
 
+  function parseTransactionDate(label: string) {
+    const [month, day] = label.split(' ');
+    const monthIndex: Record<string, number> = {
+      Jan: 0,
+      Feb: 1,
+      Mar: 2,
+      Apr: 3,
+      May: 4,
+      Jun: 5,
+      Jul: 6,
+      Aug: 7,
+      Sep: 8,
+      Oct: 9,
+      Nov: 10,
+      Dec: 11,
+    };
+    return new Date(new Date().getFullYear(), monthIndex[month], parseInt(day.replace(',', ''), 10));
+  }
+
+  function dateMatchesFilter(dateLabel: string, selected: Filters['date']) {
+    const txDate = parseTransactionDate(dateLabel);
+    const today = new Date();
+    const msPerDay = 24 * 60 * 60 * 1000;
+
+    if (selected === 'Year to date') {
+      return txDate >= new Date(today.getFullYear(), 0, 1);
+    }
+
+    const days = selected === 'Last 30 days' ? 30 : selected === 'Last 60 days' ? 60 : 90;
+    return today.getTime() - txDate.getTime() <= days * msPerDay;
+  }
+
   const filtered = allTransactions.filter((t) => {
     if (filters.account !== 'All Accounts' && t.account !== filters.account) return false;
     if (filters.type !== 'All' && t.type !== filters.type) return false;
+    if (!dateMatchesFilter(t.date, filters.date)) return false;
     return true;
   });
 

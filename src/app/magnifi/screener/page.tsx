@@ -40,10 +40,29 @@ export default function ScreenerPage() {
     setList(list.includes(val) ? list.filter((x) => x !== val) : [...list, val]);
   }
 
+  function parseMarketCap(raw: string) {
+    const match = raw.match(/\$([\d.]+)([TBM])/);
+    if (!match) return null;
+    const value = parseFloat(match[1]);
+    if (Number.isNaN(value)) return null;
+    const multiplier = match[2] === 'T' ? 1_000 : match[2] === 'B' ? 1 : 0.001;
+    return value * multiplier;
+  }
+
   const filteredResults = RESULTS.filter((row) => {
     if (checkedAssets.length > 0 && !checkedAssets.includes(row.type)) return false;
-    if (checkedSectors.length > 0 && row.sector && !checkedSectors.includes(row.sector)) return false;
+    if (checkedSectors.length > 0) {
+      if (!row.sector && row.type !== 'ETF') return false;
+      if (row.sector && !checkedSectors.includes(row.sector)) return false;
+    }
     if (checkedEsg.length > 0 && !checkedEsg.includes(row.esg)) return false;
+    if (marketCap !== 'Any') {
+      const cap = parseMarketCap(row.marketCap);
+      if (cap == null) return false;
+      if (marketCap.startsWith('Large') && cap < 10) return false;
+      if (marketCap.startsWith('Mid') && (cap < 2 || cap > 10)) return false;
+      if (marketCap.startsWith('Small') && cap >= 2) return false;
+    }
     return true;
   });
 
@@ -161,9 +180,6 @@ export default function ScreenerPage() {
           </div>
         </div>
 
-        <button className="w-full rounded-full bg-[#E0CD72] text-[#030F12] font-semibold px-5 py-2 text-sm hover:bg-[#E7C751] transition-colors">
-          Apply Filters
-        </button>
       </aside>
 
       {/* Results */}
@@ -233,8 +249,8 @@ export default function ScreenerPage() {
                     <span
                       className="px-2 py-0.5 rounded-full text-xs font-semibold"
                       style={{
-                        background: row.esg === 'N/A' ? '#F3F4F6' : '#FEFCE8',
-                        color: row.esg === 'N/A' ? '#606060' : '#92400E',
+                        background: '#FEFCE8',
+                        color: '#92400E',
                       }}
                     >
                       {row.esg}

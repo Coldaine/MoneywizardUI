@@ -112,16 +112,15 @@ export default function NewsPage() {
   }
 
   const filteredArticles = articles.filter((article) => {
-    if (activeTab === 'All') return true;
-    if (activeTab === 'Stocks') return article.type === 'stock';
-    if (activeTab === 'ETFs') return article.type === 'etf';
-    if (activeTab === 'Crypto') return article.type === 'crypto';
-    if (activeTab === 'Markets') return article.type === 'market';
-    if (activeTab === 'Your Holdings') {
-      return checkedHoldings.length === 0
-        ? true
-        : checkedHoldings.some((ticker) => article.tags.includes(ticker));
+    if (activeTab === 'Stocks' && article.type !== 'stock') return false;
+    if (activeTab === 'ETFs' && article.type !== 'etf') return false;
+    if (activeTab === 'Crypto' && article.type !== 'crypto') return false;
+    if (activeTab === 'Markets' && article.type !== 'market') return false;
+
+    if (checkedHoldings.length > 0) {
+      return checkedHoldings.some((ticker) => article.tags.includes(ticker));
     }
+
     return true;
   });
 

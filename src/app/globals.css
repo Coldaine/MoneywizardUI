@@ -62,6 +62,7 @@
 
   /* Magnifi color mapping */
   --color-magnifi-gold: var(--magnifi-gold);
+  --color-magnifi-gold-2: var(--magnifi-gold-2);
   --color-magnifi-dark: var(--magnifi-dark);
   --color-magnifi-success: var(--magnifi-success);
   --color-magnifi-error: var(--magnifi-error);

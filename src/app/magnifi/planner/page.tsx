@@ -2,13 +2,14 @@
 
 import { useState } from 'react';
 
-// Contribution impact table data
-const impactRows = [
-  { contrib: '$1,500/mo', final: '$1.82M' },
-  { contrib: '$2,000/mo', final: '$2.10M', highlight: true },
-  { contrib: '$2,500/mo', final: '$2.41M' },
-  { contrib: '$3,000/mo', final: '$2.75M' },
-];
+const IMPACT_CONTRIBS = [1500, 2000, 2500, 3000];
+
+function projectBalance(yearsElapsed: number, rate: number, contrib: number, extraContrib = 0) {
+  const r = rate / 100;
+  const monthly = (contrib + extraContrib) * 12;
+  const growth = Math.pow(1 + r, yearsElapsed);
+  return 241_856 * growth + monthly * ((growth - 1) / r);
+}
 
 function fmtM(n: number) {
   return '$' + (n / 1_000_000).toFixed(1) + 'M';
@@ -18,6 +19,9 @@ function fmtM(n: number) {
 function buildBands(startAge: number, retireAge: number, contrib: number, rate: number) {
   const years = retireAge - startAge;
   if (years <= 0) {
+    const baseVal = projectBalance(0, rate, contrib, 0);
+    const optVal = projectBalance(0, rate + 3, contrib, 500);
+    const pessVal = projectBalance(0, Math.max(rate - 3, 1), contrib, -200);
     return {
       baseLine: '',
       topArea: '',
@@ -25,6 +29,9 @@ function buildBands(startAge: number, retireAge: number, contrib: number, rate: 
       finalBase: [0, 0] as [number, number],
       finalOpt:  [0, 0] as [number, number],
       finalPess: [0, 0] as [number, number],
+      finalBaseVal: baseVal,
+      finalOptVal: optVal,
+      finalPessVal: pessVal,
       xLabels: [{ label: new Date().getFullYear().toString(), x: 0 }],
       W: 460,
       H: 200,
@@ -38,15 +45,14 @@ function buildBands(startAge: number, retireAge: number, contrib: number, rate: 
 
   const pts = (rateAdj: number, extraContrib: number) => {
     const points: [number, number][] = [];
+    let finalVal = 0;
     for (let i = 0; i <= years; i++) {
-      const r = rateAdj / 100;
-      const monthly = (contrib + extraContrib) * 12;
-      const val = 241_856 * Math.pow(1 + r, i) + monthly * ((Math.pow(1 + r, i) - 1) / r);
+      finalVal = projectBalance(i, rateAdj, contrib, extraContrib);
       const x = (i / years) * W;
-      const y = H - Math.min(val / maxVal, 1) * H;
+      const y = H - Math.min(finalVal / maxVal, 1) * H;
       points.push([x, y]);
     }
-    return points;
+    return { points, finalVal };
   };
 
   const base = pts(rate, 0);
@@ -57,20 +63,20 @@ function buildBands(startAge: number, retireAge: number, contrib: number, rate: 
     arr.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(' ');
 
   const topArea =
-    optimistic.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(' ') +
+    optimistic.points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(' ') +
     ' ' +
-    [...base].reverse().map((p, i) => `${i === 0 ? 'L' : 'L'} ${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(' ') +
+    [...base.points].reverse().map((p, i) => `${i === 0 ? 'L' : 'L'} ${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(' ') +
     ' Z';
 
   const bottomArea =
-    base.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(' ') +
+    base.points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(' ') +
     ' ' +
-    [...pessimistic].reverse().map((p) => `L ${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(' ') +
+    [...pessimistic.points].reverse().map((p) => `L ${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(' ') +
     ' Z';
 
-  const finalBase = base[base.length - 1];
-  const finalOpt  = optimistic[optimistic.length - 1];
-  const finalPess = pessimistic[pessimistic.length - 1];
+  const finalBase = base.points[base.points.length - 1];
+  const finalOpt  = optimistic.points[optimistic.points.length - 1];
+  const finalPess = pessimistic.points[pessimistic.points.length - 1];
 
   const xLabels: { label: string; x: number }[] = [];
   for (let i = 0; i <= years; i += Math.ceil(years / 5)) {
@@ -78,12 +84,15 @@ function buildBands(startAge: number, retireAge: number, contrib: number, rate: 
   }
 
   return {
-    baseLine:    toLine(base),
+    baseLine:    toLine(base.points),
     topArea,
     bottomArea,
     finalBase,
     finalOpt,
     finalPess,
+    finalBaseVal: base.finalVal,
+    finalOptVal: optimistic.finalVal,
+    finalPessVal: pessimistic.finalVal,
     xLabels,
     W,
     H,
@@ -106,22 +115,22 @@ export default function PlannerPage() {
     expenses: 6000,
   });
 
-  const chart = buildBands(applied.currentAge, applied.retireAge, applied.contrib, applied.rate);
+  const safeRetireAge = Math.max(applied.retireAge, applied.currentAge + 1);
+  const chart = buildBands(applied.currentAge, safeRetireAge, applied.contrib, applied.rate);
+  const projectionYears = safeRetireAge - applied.currentAge;
 
-  // Derive final values from chart results
-  const finalBaseVal = 241_856 * Math.pow(1 + applied.rate / 100, applied.retireAge - applied.currentAge) +
-    applied.contrib * 12 * ((Math.pow(1 + applied.rate / 100, applied.retireAge - applied.currentAge) - 1) / (applied.rate / 100));
-  const finalOptVal  = 241_856 * Math.pow(1 + (applied.rate + 3) / 100, applied.retireAge - applied.currentAge) +
-    (applied.contrib + 500) * 12 * ((Math.pow(1 + (applied.rate + 3) / 100, applied.retireAge - applied.currentAge) - 1) / ((applied.rate + 3) / 100));
-  const finalPessVal = 241_856 * Math.pow(1 + Math.max(applied.rate - 3, 1) / 100, applied.retireAge - applied.currentAge) +
-    Math.max(applied.contrib - 200, 0) * 12 * ((Math.pow(1 + Math.max(applied.rate - 3, 1) / 100, applied.retireAge - applied.currentAge) - 1) / (Math.max(applied.rate - 3, 1) / 100));
+  const impactRows = IMPACT_CONTRIBS.map((contribution) => ({
+    contrib: `$${contribution.toLocaleString()}/mo`,
+    final: fmtM(projectBalance(projectionYears, applied.rate, contribution)),
+    highlight: contribution === applied.contrib,
+  }));
 
   const retirementTarget = Math.round(applied.expenses * 12 / 0.04 / 100_000) * 100_000;
-  const swrIncome = Math.round((finalBaseVal * 0.04) / 12).toLocaleString();
+  const swrIncome = Math.round((chart.finalBaseVal * 0.04) / 12).toLocaleString();
   const probability = Math.min(99, Math.max(10, Math.round(60 + (applied.rate - 4) * 5 + (applied.contrib - 500) / 100)));
 
   function handleRecalculate() {
-    setApplied({ currentAge, retireAge, contrib, rate, expenses });
+    setApplied({ currentAge, retireAge: Math.max(retireAge, currentAge + 1), contrib, rate, expenses });
   }
 
   return (
@@ -142,7 +151,10 @@ export default function PlannerPage() {
             value={currentAge}
             min={25} max={70}
             display={`${currentAge} yrs`}
-            onChange={setCurrentAge}
+            onChange={(v) => {
+              setCurrentAge(v);
+              setRetireAge((prev) => Math.max(prev, v + 1));
+            }}
           />
           <SliderField
             label="Retirement Age"
@@ -186,7 +198,7 @@ export default function PlannerPage() {
           {/* Projection chart */}
           <div className="card-magnifi">
             <h2 className="text-base font-semibold mb-4 text-[#030F12]">
-              Projection: {2026} – {2026 + (applied.retireAge - applied.currentAge)}
+              Projection: {2026} – {2026 + (safeRetireAge - applied.currentAge)}
             </h2>
             <svg
               width="100%"
@@ -213,9 +225,9 @@ export default function PlannerPage() {
                 <path d={chart.baseLine} fill="none" stroke="#E0CD72" strokeWidth={2.5} />
 
                 {/* Final value labels — dynamic from computed values */}
-                <text x={chart.finalOpt[0]  + 4} y={chart.finalOpt[1]  - 4} fontSize={9} fill="#B89A00">Opt. {fmtM(finalOptVal)}</text>
-                <text x={chart.finalBase[0] + 4} y={chart.finalBase[1] - 4} fontSize={9} fill="#E0CD72">Base {fmtM(finalBaseVal)}</text>
-                <text x={chart.finalPess[0] + 4} y={chart.finalPess[1] + 12} fontSize={9} fill="#999">Pess. {fmtM(finalPessVal)}</text>
+                <text x={chart.finalOpt[0]  + 4} y={chart.finalOpt[1]  - 4} fontSize={9} fill="#B89A00">Opt. {fmtM(chart.finalOptVal)}</text>
+                <text x={chart.finalBase[0] + 4} y={chart.finalBase[1] - 4} fontSize={9} fill="#E0CD72">Base {fmtM(chart.finalBaseVal)}</text>
+                <text x={chart.finalPess[0] + 4} y={chart.finalPess[1] + 12} fontSize={9} fill="#999">Pess. {fmtM(chart.finalPessVal)}</text>
 
                 {/* X-axis labels */}
                 {chart.xLabels.map((l) => (
@@ -230,7 +242,7 @@ export default function PlannerPage() {
               className="mt-3 rounded-xl px-4 py-2.5 text-sm font-medium"
               style={{ background: 'rgba(224,205,114,0.12)', color: '#030F12' }}
             >
-              At <strong>{fmtM(finalBaseVal)}</strong> with 4% SWR = <strong>${swrIncome}/mo</strong> in retirement income
+              At <strong>{fmtM(chart.finalBaseVal)}</strong> with 4% SWR = <strong>${swrIncome}/mo</strong> in retirement income
             </div>
           </div>
 
@@ -278,12 +290,7 @@ export default function PlannerPage() {
                         </span>
                       )}
                     </td>
-                    <td
-                      className="py-3 font-bold"
-                      style={{ color: row.highlight ? '#E0CD72' : '#030F12' }}
-                    >
-                      {row.final}
-                    </td>
+                    <td className="py-3 font-bold" style={{ color: row.highlight ? '#E0CD72' : '#030F12' }}>{row.final}</td>
                   </tr>
                 ))}
               </tbody>

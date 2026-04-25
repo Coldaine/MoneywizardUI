@@ -53,14 +53,17 @@ function NavSection({ label, items, pathname }: {
   items: { label: string; icon: string; href: string }[];
   pathname: string;
 }) {
+  const allHrefs = [...mainNav, ...activityNav, ...analyticsNav, ...planningNav, ...resourcesNav, ...accountNav].map((item) => item.href);
+
   return (
     <div className="mb-4">
       <div className="px-3 mb-1 text-[10px] uppercase font-bold tracking-wider" style={{ color: '#606060' }}>
         {label}
       </div>
       {items.map((item) => {
-        const isActive = item.href === '/magnifi'
-          ? pathname === '/magnifi'
+        const hasNestedChild = allHrefs.some((href) => href !== item.href && href.startsWith(`${item.href}/`));
+        const isActive = item.href === '/magnifi' || hasNestedChild
+          ? pathname === item.href
           : pathname === item.href || pathname.startsWith(item.href + '/');
         return (
           <Link
@@ -117,7 +120,7 @@ export function MagnifiSidebar() {
           className="flex items-center gap-2 text-xs py-2 px-1 rounded transition-colors"
           style={{ color: '#606060' }}
         >
-          <span>←</span>
+          <span aria-hidden="true">←</span>
           <span>Back to Monarch</span>
         </Link>
       </div>

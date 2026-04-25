@@ -141,10 +141,11 @@ export default function NotificationsPage() {
             {filtered.map((n) => {
               const badge = BADGE[n.category];
               return (
-                <div
+                <button
+                  type="button"
                   key={n.id}
                   onClick={() => markRead(n.id)}
-                  className="card-magnifi flex items-start gap-4 cursor-pointer hover:shadow-md transition-shadow"
+                  className="card-magnifi flex items-start gap-4 cursor-pointer hover:shadow-md transition-shadow text-left w-full"
                   style={!n.read ? { borderLeft: '3px solid #E0CD72' } : {}}
                 >
                   <span className="text-2xl mt-0.5" aria-hidden="true">{n.icon}</span>
@@ -164,7 +165,7 @@ export default function NotificationsPage() {
                     <p className="text-sm" style={{ color: '#606060' }}>{n.body}</p>
                     <p className="text-xs mt-1.5" style={{ color: '#9CA3AF' }}>{n.time}</p>
                   </div>
-                </div>
+                </button>
               );
             })}
           </div>
@@ -179,14 +180,15 @@ export default function NotificationsPage() {
           {prefs.map((p) => (
             <div key={p.id} className="card-magnifi flex items-center gap-4">
               <div className="flex-1">
-                <p className="font-semibold text-sm text-[#030F12]">{p.label}</p>
+                <p id={`pref-${p.id}`} className="font-semibold text-sm text-[#030F12]">{p.label}</p>
                 <p className="text-sm" style={{ color: '#606060' }}>{p.description}</p>
               </div>
               <button
                 role="switch"
                 aria-checked={p.enabled}
+                aria-labelledby={`pref-${p.id}`}
                 onClick={() => togglePref(p.id)}
-                className="relative w-11 h-6 rounded-full transition-colors shrink-0"
+                className="relative w-11 h-6 rounded-full transition-colors shrink-0 focus-visible:ring-2 focus-visible:ring-[#E0CD72] focus-visible:ring-offset-2 focus-visible:outline-none"
                 style={{ background: p.enabled ? '#E0CD72' : '#E0E0E0' }}
               >
                 <span

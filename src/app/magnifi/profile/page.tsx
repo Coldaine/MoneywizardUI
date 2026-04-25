@@ -1,9 +1,18 @@
-export default function ProfilePage() {
-  const riskScore = 7;
-  const totalSegments = 10;
+const RISK_SCORE = 7;
+const TOTAL_SEGMENTS = 10;
+const ASSET_CLASSES = ['Stocks', 'ETFs', 'Crypto'];
+const INVESTMENT_STYLES = ['Growth', 'Balanced', 'Income'] as const;
 
-  const assetClasses = ['Stocks', 'ETFs', 'Crypto'];
-  const investmentStyles = ['Growth', 'Balanced', 'Income'] as const;
+function getStyleFromRiskScore(score: number) {
+  if (score >= 7) return 'Growth';
+  if (score >= 4) return 'Balanced';
+  return 'Income';
+}
+
+export default function ProfilePage() {
+  const riskScore = RISK_SCORE;
+  const totalSegments = TOTAL_SEGMENTS;
+  const activeStyle = getStyleFromRiskScore(riskScore);
 
   return (
     <div className="space-y-6 max-w-2xl">
@@ -63,12 +72,12 @@ export default function ProfilePage() {
           <div>
             <p className="text-sm mb-2" style={{ color: '#606060' }}>Investment Style</p>
             <div className="flex gap-2">
-              {investmentStyles.map((style) => (
+              {INVESTMENT_STYLES.map((style) => (
                 <span
                   key={style}
                   className="px-3 py-1 rounded-full text-sm font-semibold"
                   style={
-                    style === 'Growth'
+                    style === activeStyle
                       ? { background: '#E0CD72', color: '#030F12' }
                       : { background: '#F3F4F6', color: '#606060' }
                   }
@@ -89,7 +98,7 @@ export default function ProfilePage() {
           <div className="py-2 border-t" style={{ borderColor: '#F0F0F0' }}>
             <p className="text-sm mb-2" style={{ color: '#606060' }}>Preferred Asset Classes</p>
             <div className="flex gap-2 flex-wrap">
-              {assetClasses.map((cls) => (
+              {ASSET_CLASSES.map((cls) => (
                 <span
                   key={cls}
                   className="px-3 py-1 rounded-full text-xs font-semibold"
@@ -113,7 +122,7 @@ export default function ProfilePage() {
             className="mb-1 px-3 py-1 rounded-full text-xs font-bold"
             style={{ background: '#E0CD72', color: '#030F12' }}
           >
-            Aggressive Growth
+            {activeStyle === 'Growth' ? 'Aggressive Growth' : activeStyle === 'Balanced' ? 'Balanced Growth' : 'Income Focus'}
           </span>
         </div>
 
@@ -145,7 +154,7 @@ export default function ProfilePage() {
         <div className="space-y-3">
           <div className="flex items-center justify-between py-2 border-b" style={{ borderColor: '#F0F0F0' }}>
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold" style={{ background: '#4285F4' }}>
+              <div aria-hidden="true" className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold" style={{ background: '#4285F4' }}>
                 G
               </div>
               <div>
